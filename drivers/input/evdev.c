@@ -290,6 +290,7 @@ static int evdev_open(struct inode *inode, struct file *file)
 	file->private_data = client;
 	return 0;
 
+        wake_lock_destroy(&client->wake_lock);
  err_free_client:
 	evdev_detach_client(evdev, client);
 	wake_lock_destroy(&client->wake_lock);
