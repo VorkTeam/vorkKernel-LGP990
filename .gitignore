@@ -29,7 +29,12 @@
 *.lzma
 *.patch
 *.gcno
-
+auto.conf
+auto.conf.cmd
+kernel.release
+autoconf.h
+utsrelease.h
+gedit.sh
 #
 # Top-level generic files
 #
