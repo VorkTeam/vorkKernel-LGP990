@@ -2147,7 +2147,7 @@ NvRmPrivAp15FastClockConfig(NvRmDeviceHandle hRmDevice)
     // Set PLLC and CPU clock to SoC maximum - can be done now, when core
     // voltage is guaranteed to be nominal, provided none of the display
     // heads is already using PLLC as pixel clock source.
-    CpuKHz = NvRmPrivGetSocClockLimits(NvRmModuleID_Cpu)->MaxKHz;
+    CpuKHz = 1000000;
     FreqKHz = NvRmPrivGetClockSourceFreq(NvRmClockSource_PllC0);
     if (CpuKHz != FreqKHz)
     {
