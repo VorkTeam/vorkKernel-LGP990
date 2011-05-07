@@ -46,7 +46,7 @@
 	 * preserved from get_irqnr_and_base above
 	 */
 	test_for_ipi r0, r6, r5, lr
-	movne	r0, sp
+	movne	r1, sp
 	adrne	lr, BSYM(1b)
 	bne	do_IPI
 
@@ -509,8 +509,7 @@ __und_usr:
 	blo	__und_usr_unknown
 3:	ldrht	r0, [r4]
 	add	r2, r2, #2			@ r2 is PC + 2, make it PC + 4
-	str    	r2, [sp, #S_PC]			@ it's a 2x16bit instr, update
-	orr    	r0, r0, r5, lsl #16		@  regs->ARM_pc
+	orr    	r0, r0, r5, lsl #16
 #else
 	b	__und_usr_unknown
 #endif

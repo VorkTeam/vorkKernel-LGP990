@@ -28,6 +28,7 @@ struct css_id;
 extern int cgroup_init_early(void);
 extern int cgroup_init(void);
 extern void cgroup_lock(void);
+extern int cgroup_lock_is_held(void);
 extern bool cgroup_lock_live_group(struct cgroup *cgrp);
 extern void cgroup_unlock(void);
 extern void cgroup_fork(struct task_struct *p);
@@ -83,12 +84,6 @@ enum {
 	CSS_REMOVED, /* This CSS is dead */
 };
 
-/* Caller must verify that the css is not for root cgroup */
-static inline void __css_get(struct cgroup_subsys_state *css, int count)
-{
-	atomic_add(count, &css->refcnt);
-}
-
 /*
  * Call css_get() to hold a reference on the css; it can be used
  * for a reference obtained via:
@@ -96,6 +91,7 @@ static inline void __css_get(struct cgroup_subsys_state *css, int count)
  * - task->cgroups for a locked task
  */
 
+extern void __css_get(struct cgroup_subsys_state *css, int count);
 static inline void css_get(struct cgroup_subsys_state *css)
 {
 	/* We don't need to reference count the root state */
@@ -142,10 +138,7 @@ static inline void css_put(struct cgroup_subsys_state *css)
 enum {
 	/* Control Group is dead */
 	CGRP_REMOVED,
-	/*
-	 * Control Group has previously had a child cgroup or a task,
-	 * but no longer (only if CGRP_NOTIFY_ON_RELEASE is set)
-	 */
+	/* Control Group has ever had a child cgroup or a task */
 	CGRP_RELEASABLE,
 	/* Control Group requires release notifications to userspace */
 	CGRP_NOTIFY_ON_RELEASE,
@@ -530,7 +523,9 @@ static inline struct cgroup_subsys_state *cgroup_subsys_state(
 static inline struct cgroup_subsys_state *task_subsys_state(
 	struct task_struct *task, int subsys_id)
 {
-	return rcu_dereference(task->cgroups->subsys[subsys_id]);
+	return rcu_dereference_check(task->cgroups->subsys[subsys_id],
+				     rcu_read_lock_held() ||
+				     cgroup_lock_is_held());
 }
 
 static inline struct cgroup* task_cgroup(struct task_struct *task,
