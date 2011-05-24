@@ -773,6 +773,7 @@ static struct attribute *default_attrs[] = {
 #ifdef USE_FAKE_SHMOO
 	&cpu_temp.attr,
 	&frequency_voltage_table.attr,
+	&scaling_available_frequencies.attr,
 	&UV_mV_table.attr,
 #endif // USE_FAKE_SHMOO
 	NULL
