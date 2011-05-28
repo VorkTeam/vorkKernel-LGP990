@@ -83,9 +83,7 @@ static void __exit_signal(struct task_struct *tsk)
 	BUG_ON(!sig);
 	BUG_ON(!atomic_read(&sig->count));
 
-	sighand = rcu_dereference_check(tsk->sighand,
-					rcu_read_lock_held() ||
-					lockdep_is_held(&tasklist_lock));
+	sighand = rcu_dereference(tsk->sighand);
 	spin_lock(&sighand->siglock);
 
 	posix_cpu_timers_exit(tsk);
@@ -178,10 +176,8 @@ void release_task(struct task_struct * p)
 repeat:
 	tracehook_prepare_release_task(p);
 	/* don't need to get the RCU readlock here - the process is dead and
-	 * can't be modifying its own credentials. But shut RCU-lockdep up */
-	rcu_read_lock();
+	 * can't be modifying its own credentials */
 	atomic_dec(&__task_cred(p)->user->processes);
-	rcu_read_unlock();
 
 	proc_flush_task(p);
 
@@ -483,11 +479,9 @@ static void close_files(struct files_struct * files)
 	/*
 	 * It is safe to dereference the fd table without RCU or
 	 * ->file_lock because this is the last reference to the
-	 * files structure.  But use RCU to shut RCU-lockdep up.
+	 * files structure.
 	 */
-	rcu_read_lock();
 	fdt = files_fdtable(files);
-	rcu_read_unlock();
 	for (;;) {
 		unsigned long set;
 		i = j * __NFDBITS;
@@ -533,12 +527,10 @@ void put_files_struct(struct files_struct *files)
 		 * at the end of the RCU grace period. Otherwise,
 		 * you can free files immediately.
 		 */
-		rcu_read_lock();
 		fdt = files_fdtable(files);
 		if (fdt != &files->fdtab)
 			kmem_cache_free(files_cachep, files);
 		free_fdtable(fdt);
-		rcu_read_unlock();
 	}
 }
 
