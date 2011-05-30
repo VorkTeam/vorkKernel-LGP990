@@ -42,7 +42,6 @@
 #include "ap15/project_relocation_table.h"
 
 #define USE_FAKE_SHMOO
-#define USE_FAKE_SHMOO_PSYCHO
 
 #ifdef USE_FAKE_SHMOO
 #include <linux/kernel.h>
