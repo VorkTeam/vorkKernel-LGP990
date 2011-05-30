@@ -79,7 +79,7 @@
 NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
-#ifdef USE_FAKE_SHMOO_PSYCHO
+#ifdef CONFIG_USE_FAKE_SHMOO_PSYCHO
 
 #define MAX_OVERCLOCK (1500000)
 
@@ -142,7 +142,7 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     }
 };
 
-#endif // USE_FAKE_SHMOO_PSYCO
+#endif // CONFIG_USE_FAKE_SHMOO_PSYCO
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \
