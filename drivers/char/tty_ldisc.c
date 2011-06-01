@@ -722,12 +722,9 @@ static void tty_reset_termios(struct tty_struct *tty)
  *	state closed
  */
 
-static int tty_ldisc_reinit(struct tty_struct *tty, int ldisc)
+static void tty_ldisc_reinit(struct tty_struct *tty, int ldisc)
 {
-	struct tty_ldisc *ld = tty_ldisc_get(ldisc);
-
-	if (IS_ERR(ld))
-		return -1;
+	struct tty_ldisc *ld;
 
 	tty_ldisc_close(tty, tty->ldisc);
 	tty_ldisc_put(tty->ldisc);
@@ -735,10 +732,10 @@ static int tty_ldisc_reinit(struct tty_struct *tty, int ldisc)
 	/*
 	 *	Switch the line discipline back
 	 */
+	ld = tty_ldisc_get(ldisc);
+	BUG_ON(IS_ERR(ld));
 	tty_ldisc_assign(tty, ld);
 	tty_set_termios_ldisc(tty, ldisc);
-
-	return 0;
 }
 
 /**
@@ -800,16 +797,13 @@ void tty_ldisc_hangup(struct tty_struct *tty)
 	   a FIXME */
 	if (tty->ldisc) {	/* Not yet closed */
 		if (reset == 0) {
-
-			if (!tty_ldisc_reinit(tty, tty->termios->c_line))
-				err = tty_ldisc_open(tty, tty->ldisc);
-			else
-				err = 1;
+			tty_ldisc_reinit(tty, tty->termios->c_line);
+			err = tty_ldisc_open(tty, tty->ldisc);
 		}
 		/* If the re-open fails or we reset then go to N_TTY. The
 		   N_TTY open cannot fail */
 		if (reset || err) {
-			BUG_ON(tty_ldisc_reinit(tty, N_TTY));
+			tty_ldisc_reinit(tty, N_TTY);
 			WARN_ON(tty_ldisc_open(tty, tty->ldisc));
 		}
 		tty_ldisc_enable(tty);
