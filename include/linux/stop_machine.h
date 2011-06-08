@@ -1,14 +1,45 @@
 #ifndef _LINUX_STOP_MACHINE
 #define _LINUX_STOP_MACHINE
-/* "Bogolock": stop the entire machine, disable interrupts.  This is a
-   very heavy lock, which is equivalent to grabbing every spinlock
-   (and more).  So the "read" side to such a lock is anything which
-   disables preeempt. */
+
 #include <linux/cpu.h>
 #include <linux/cpumask.h>
+#include <linux/list.h>
 #include <asm/system.h>
 
 #if defined(CONFIG_STOP_MACHINE) && defined(CONFIG_SMP)
+
+/*
+ * stop_cpu[s]() is simplistic per-cpu maximum priority cpu
+ * monopolization mechanism.  The caller can specify a non-sleeping
+ * function to be executed on a single or multiple cpus preempting all
+ * other processes and monopolizing those cpus until it finishes.
+ *
+ * Resources for this mechanism are preallocated when a cpu is brought
+ * up and requests are guaranteed to be served as long as the target
+ * cpus are online.
+ */
+
+typedef int (*cpu_stop_fn_t)(void *arg);
+
+struct cpu_stop_work {
+	struct list_head	list;		/* cpu_stopper->works */
+	cpu_stop_fn_t		fn;
+	void			*arg;
+	struct cpu_stop_done	*done;
+};
+
+int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
+void stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
+			 struct cpu_stop_work *work_buf);
+int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+int try_stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+
+/*
+ * stop_machine "Bogolock": stop the entire machine, disable
+ * interrupts.  This is a very heavy lock, which is equivalent to
+ * grabbing every spinlock (and more).  So the "read" side to such a
+ * lock is anything which disables preeempt.
+ */
 
 /**
  * stop_machine: freeze the machine on all CPUs and run this function
@@ -36,23 +67,6 @@ int stop_machine(int (*fn)(void *), void *data, const struct cpumask *cpus);
  */
 int __stop_machine(int (*fn)(void *), void *data, const struct cpumask *cpus);
 
-/**
- * stop_machine_create: create all stop_machine threads
- *
- * Description: This causes all stop_machine threads to be created before
- * stop_machine actually gets called. This can be used by subsystems that
- * need a non failing stop_machine infrastructure.
- */
-int stop_machine_create(void);
-
-/**
- * stop_machine_destroy: destroy all stop_machine threads
- *
- * Description: This causes all stop_machine threads which were created with
- * stop_machine_create to be destroyed again.
- */
-void stop_machine_destroy(void);
-
 #else
 
 static inline int stop_machine(int (*fn)(void *), void *data,
@@ -64,9 +78,6 @@ static inline int stop_machine(int (*fn)(void *), void *data,
 	local_irq_enable();
 	return ret;
 }
-
-static inline int stop_machine_create(void) { return 0; }
-static inline void stop_machine_destroy(void) { }
 
 #endif /* CONFIG_SMP */
 #endif /* _LINUX_STOP_MACHINE */
