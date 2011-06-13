@@ -688,6 +688,17 @@ static ssize_t show_frequency_voltage_table(struct cpufreq_policy *policy, char 
 	return table - buf;
 }
 
+static ssize_t show_scaling_available_frequencies(struct cpufreq_policy *policy, char *buf)
+{
+	int i;
+	char *table = buf;
+
+	for( i=fake_CpuShmoo.ShmooVmaxIndex; i>-1; i-- )
+	{
+		table += sprintf(table, "%d ", fake_CpuShmoo.pScaledCpuLimits->MaxKHzList[i]);
+	}
+	return table - buf;
+}
 
 static ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf)
 {
@@ -743,6 +754,7 @@ define_one_rw(scaling_setspeed);
 #ifdef USE_FAKE_SHMOO
 define_one_ro(cpu_temp);
 define_one_ro(frequency_voltage_table);
+define_one_ro(scaling_available_frequencies);
 define_one_rw(UV_mV_table);
 #endif // USE_FAKE_SHMOO
 
@@ -761,6 +773,7 @@ static struct attribute *default_attrs[] = {
 #ifdef USE_FAKE_SHMOO
 	&cpu_temp.attr,
 	&frequency_voltage_table.attr,
+	&scaling_available_frequencies.attr,
 	&UV_mV_table.attr,
 #endif // USE_FAKE_SHMOO
 	NULL
