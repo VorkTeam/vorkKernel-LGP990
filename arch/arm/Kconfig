@@ -954,6 +954,12 @@ config ARM_ERRATA_720789
 	  tables. The workaround changes the TLB flushing routines to invalidate
 	  entries regardless of the ASID.
 
+config USE_FAKE_SHMOO_PSYCHO
+	bool "Use Psycho Fake Shmoo OC (1.5 Ghz)"
+	default n
+	  help
+	  This enables psycho freqs. Crazy stuff.
+
 endmenu
 
 source "arch/arm/common/Kconfig"
