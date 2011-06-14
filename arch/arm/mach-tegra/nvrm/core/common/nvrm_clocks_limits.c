@@ -245,20 +245,18 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Combine AVP/System clock absolute limit with scaling V/F ladder upper
     // boundary, and set default clock range for all present modules the same
     // as for AVP/System clock
-#ifdef CONFIG_USE_FAKE_SHMOO_PSYCHO
     AvpMaxKHz = 266400;
-#else
-    AvpMaxKHz = pSKUedLimits->AvpMaxKHz;
-    for (i = 0; i < pShmoo->ScaledLimitsListSize; i++)
-    {
-        if (pHwLimits[i].HwDeviceId == NV_DEVID_AVP)
-        {
-            AvpMaxKHz = NV_MIN(
-                AvpMaxKHz, pHwLimits[i].MaxKHzList[pShmoo->ShmooVmaxIndex]);
-            break;
-        }
-    }
-#endif
+
+//    AvpMaxKHz = pSKUedLimits->AvpMaxKHz;
+//    for (i = 0; i < pShmoo->ScaledLimitsListSize; i++)
+//    {
+//        if (pHwLimits[i].HwDeviceId == NV_DEVID_AVP)
+//        {
+//            AvpMaxKHz = NV_MIN(
+//                AvpMaxKHz, pHwLimits[i].MaxKHzList[pShmoo->ShmooVmaxIndex]);
+//            break;
+//        }
+//    }
     for (i = 0; i < NvRmPrivModuleID_Num; i++)
     {
         NvRmModuleInstance *inst;
