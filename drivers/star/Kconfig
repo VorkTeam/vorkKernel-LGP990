@@ -138,5 +138,11 @@ config STAR_BD_ADDRESS
 	default y
 	help
 	  LGE added: It supports Bluetooth address Read / Write functionality on user mode.	  
-            
+
+config LEDS_CLASS
+	tristate "soft-key LED control support"
+	default n
+	help
+	  Added soft key LED notification support
+
 endmenu
