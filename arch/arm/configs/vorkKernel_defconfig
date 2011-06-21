@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.41
-# Tue Jun 14 04:29:43 2011
+# Tue Jun 21 16:43:56 2011
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -51,10 +51,15 @@ CONFIG_SWAP=y
 #
 # RCU Subsystem
 #
-CONFIG_CLASSIC_RCU=y
+# CONFIG_CLASSIC_RCU is not set
 # CONFIG_TREE_RCU is not set
 # CONFIG_TREE_PREEMPT_RCU is not set
 # CONFIG_TINY_RCU is not set
+CONFIG_JRCU=y
+CONFIG_JRCU_DAEMON=y
+CONFIG_JRCU_DAEMON_PRIO=0
+# CONFIG_JRCU_LAZY is not set
+CONFIG_PREEMPT_COUNT_CPU=y
 # CONFIG_TREE_RCU_TRACE is not set
 CONFIG_IKCONFIG=y
 CONFIG_IKCONFIG_PROC=y
