@@ -68,6 +68,8 @@ extern void rcu_init(void);
 #include <linux/rcutree.h>
 #elif defined(CONFIG_TINY_RCU)
 #include <linux/rcutiny.h>
+#elif defined(CONFIG_JRCU)
+#include <linux/jrcu.h>
 #elif defined(CONFIG_CLASSIC_RCU)
 #include <linux/rcuclassic.h>
 #else
