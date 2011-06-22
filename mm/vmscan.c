@@ -48,6 +48,8 @@
 
 #include "internal.h"
 
+#include <linux/vorkKernel.h>
+
 struct scan_control {
 	/* Incremented by the number of inactive pages that were scanned */
 	unsigned long nr_scanned;
@@ -133,7 +135,7 @@ long vm_total_pages;	/* The total number of pages which the VM controls */
 /*
  * Only start shrinking active file list when inactive is below this percentage.
  */
-int inactive_file_ratio = 20;
+int inactive_file_ratio = inactive_file_ratio_default;
 
 static LIST_HEAD(shrinker_list);
 static DECLARE_RWSEM(shrinker_rwsem);

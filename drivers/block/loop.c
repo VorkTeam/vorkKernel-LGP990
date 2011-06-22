@@ -595,7 +595,11 @@ static int loop_thread(void *data)
 	struct loop_device *lo = data;
 	struct bio *bio;
 
+#ifdef CFS_BOOST
+	sched_privileged_task(current);
+#else
 	set_user_nice(current, -20);
+#endif
 
 	while (!kthread_should_stop() || !bio_list_empty(&lo->lo_bio_list)) {
 
