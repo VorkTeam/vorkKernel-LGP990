@@ -712,7 +712,12 @@ static void __init sanity_check_meminfo(void)
 		*bank = meminfo.bank[i];
 
 #ifdef CONFIG_HIGHMEM
-		if (__va(bank->start) > VMALLOC_MIN ||
+               /*
+                * In case where memory banks which are completely overlapping
+                * with vmalloc area, the banks need to be marked in highmem.
+                */
+
+		if (__va(bank->start) >= VMALLOC_MIN ||
 		    __va(bank->start) < (void *)PAGE_OFFSET)
 			highmem = 1;
 
