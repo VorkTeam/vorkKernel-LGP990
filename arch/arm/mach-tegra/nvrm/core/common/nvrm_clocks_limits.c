@@ -113,9 +113,9 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
 };
 
 #else
-#define MAX_OVERCLOCK (1216000)
+#define MAX_OVERCLOCK (1408000)
 
-NvU32 FakeShmooVmaxIndex = 6; // Max voltage index in the voltage tab (size-1)
+NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
 NvU32 FakeShmooVoltages[] = {
     700,
@@ -125,6 +125,7 @@ NvU32 FakeShmooVoltages[] = {
     950,
     1050,
     1150,
+    1250,
 };
 
 NvRmScaledClkLimits FakepScaledCpuLimits = {
@@ -140,6 +141,7 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     	1015000,
 	1100000,
 	1216000,
+	1408000,
     }
 };
 
