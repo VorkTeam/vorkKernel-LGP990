@@ -49,6 +49,8 @@
 #include "tegra_devkit_custopt.h"
 #include "nvodm_keylist_reserved.h"
 #include "nvrm_drf.h"
+#include <linux/kernel.h>
+#include <linux/gpio.h>
 
 #define NVODM_ENABLE_EMC_DVFS (1)
 
@@ -922,27 +924,27 @@ NvOdmQuerySpiGetDeviceInfo(
 }
 
 //20101204-1, , NVIDIA's patch for setting signal level during idle state [START]
-static const NvOdmQuerySpiIdleSignalState s_NvOdmQuerySpiIdleSignalStateLevel[] = 
-{ 
-	{NV_FALSE, NvOdmQuerySpiSignalMode_1, NV_FALSE} // Spi 1 
-}; 
+static const NvOdmQuerySpiIdleSignalState s_NvOdmQuerySpiIdleSignalStateLevel[] =
+{
+	{NV_FALSE, NvOdmQuerySpiSignalMode_1, NV_FALSE} // Spi 1
+};
 
-const NvOdmQuerySpiIdleSignalState * 
-NvOdmQuerySpiGetIdleSignalState( 
-	NvOdmIoModule OdmIoModule, 
-	NvU32 ControllerId) 
-{ 
-	if (OdmIoModule == NvOdmIoModule_Spi) 
-	{ 
-		if (ControllerId == 0) 
-			return &s_NvOdmQuerySpiIdleSignalStateLevel[0]; 
+const NvOdmQuerySpiIdleSignalState *
+NvOdmQuerySpiGetIdleSignalState(
+	NvOdmIoModule OdmIoModule,
+	NvU32 ControllerId)
+{
+	if (OdmIoModule == NvOdmIoModule_Spi)
+	{
+		if (ControllerId == 0)
+			return &s_NvOdmQuerySpiIdleSignalStateLevel[0];
 #ifdef CONFIG_MACH_STAR_TMUS
-		else if (ControllerId == 1) 
-			return &s_NvOdmQuerySpiIdleSignalStateLevel[0]; 
+		else if (ControllerId == 1)
+			return &s_NvOdmQuerySpiIdleSignalStateLevel[0];
 #endif
-	} 
-	return NULL; 
-} 
+	}
+	return NULL;
+}
 //20101204-1, , NVIDIA's patch for setting signal level during idle state [END]
 
 const NvOdmQueryI2sInterfaceProperty *
@@ -1333,21 +1335,32 @@ NvOdmQueryGetUsbProperty(NvOdmIoModule OdmIoModule,
 #else
 #define NVODM_USE_INTERNAL_PHY_VBUS_DETECTION  NV_TRUE
 #endif
-    static const NvOdmUsbProperty Usb1Property =
+
+    int HostMode = 0;
+    static const NvOdmUsbProperty Usb1PropertySlave =
     {
         NvOdmUsbInterfaceType_Utmi,
         (NvOdmUsbChargerType_SE0 | NvOdmUsbChargerType_SE1 | NvOdmUsbChargerType_SK),
         20,
         NVODM_USE_INTERNAL_PHY_VBUS_DETECTION,
-#ifdef CONFIG_USB_TEGRA_OTG
         NvOdmUsbModeType_OTG,
-#else
         NvOdmUsbModeType_Device,
-#endif
         NvOdmUsbIdPinType_CableId,
         NvOdmUsbConnectorsMuxType_None,
         NV_FALSE
     };
+
+    static const NvOdmUsbProperty Usb1PropertyHost =
+    {
+        NvOdmUsbInterfaceType_Utmi,
+        (NvOdmUsbChargerType_SE0 | NvOdmUsbChargerType_SE1 | NvOdmUsbChargerType_SK),
+        20,
+        NVODM_USE_INTERNAL_PHY_VBUS_DETECTION,
+        NvOdmUsbModeType_OTG,
+        NvOdmUsbIdPinType_CableId,
+        NvOdmUsbConnectorsMuxType_None,
+        NV_FALSE
+    }
 
     static const NvOdmUsbProperty Usb2Property =
     {
@@ -1385,8 +1398,28 @@ NvOdmQueryGetUsbProperty(NvOdmIoModule OdmIoModule,
         NV_FALSE
     };
 
-    if (OdmIoModule == NvOdmIoModule_Usb && Instance == 0)
-        return &(Usb1Property);
+    gpio_request(73, "PWR") ;
+    gpio_direction_input(73) ;
+    if ((gpio_get_value(73)) == 0)
+    {
+      HostMode = 1;
+    }
+      else
+    {
+      HostMode = 0;
+    }
+
+    if (OdmIoModule == NvOdmIoModule_Usb && Instance == 0 && HostMode == 1)
+  {
+  printk(KERN_INFO "STAR: Booting Host Mode Stage 1 of 2\n") ;
+        return &(Usb1PropertyHost);
+  }
+
+    if (OdmIoModule == NvOdmIoModule_Usb && Instance == 0 && HostMode == 0)
+  {
+  printk(KERN_INFO "STAR: Booting Slave Mode Stage 1 of 2\n") ;
+        return &(Usb1PropertySlave);
+  }
 
     if (OdmIoModule == NvOdmIoModule_Usb && Instance == 1)
         return &(Usb2Property);  // USB2 is not used.

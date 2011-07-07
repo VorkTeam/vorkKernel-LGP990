@@ -742,37 +742,43 @@ static struct platform_device tegra_hcd[] = {
 	},
 };
 
-#ifdef CONFIG_USB_TEGRA_OTG
-#define otg_is_okay(_instance) ((_instance)==0)
-static struct tegra_otg_platform_data tegra_otg_platform = {
-	.instance = 0,
-};
-static struct resource tegra_otg_resources[] = {
-	[0] = {
-		.start = TEGRA_USB_BASE,
-		.end = TEGRA_USB_BASE + TEGRA_USB_SIZE - 1,
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = INT_USB,
-		.end = INT_USB,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-static struct platform_device tegra_otg = {
-	.name = "tegra-otg",
-	.id = 0,
-	.resource = tegra_otg_resources,
-	.num_resources = ARRAY_SIZE(tegra_otg_resources),
-	.dev = {
-		.platform_data = &tegra_otg_platform,
-		.coherent_dma_mask = DMA_BIT_MASK(32),
-		.dma_mask = &tegra_dma_mask,
-	},
-};
-#else
-#define otg_is_okay(_instance) (0)
-#endif
+gpio_request(73, "PWR") ;
+gpio_direction_input(73) ;
+
+if (gpio_get_value(73) == 0)
+{
+	#define otg_is_okay(_instance) ((_instance)==0)
+	static struct tegra_otg_platform_data tegra_otg_platform = {
+		.instance = 0,
+	};
+	static struct resource tegra_otg_resources[] = {
+		[0] = {
+			.start = TEGRA_USB_BASE,
+			.end = TEGRA_USB_BASE + TEGRA_USB_SIZE - 1,
+			.flags = IORESOURCE_MEM,
+		},
+		[1] = {
+			.start = INT_USB,
+			.end = INT_USB,
+			.flags = IORESOURCE_IRQ,
+		},
+	};
+	static struct platform_device tegra_otg = {
+		.name = "tegra-otg",
+		.id = 0,
+		.resource = tegra_otg_resources,
+		.num_resources = ARRAY_SIZE(tegra_otg_resources),
+		.dev = {
+			.platform_data = &tegra_otg_platform,
+			.coherent_dma_mask = DMA_BIT_MASK(32),
+			.dma_mask = &tegra_dma_mask,
+		},
+	};
+}
+else
+{
+	#define otg_is_okay(_instance) (0)
+}
 
 static void __init tegra_setup_hcd(void)
 {
@@ -795,12 +801,17 @@ static void __init tegra_setup_hcd(void)
 			       __func__, i);
 			continue;
 		}
-#ifdef CONFIG_USB_TEGRA_OTG
+	gpio_request(73, "PWR") ;
+	gpio_direction_input(73) ;
+
+	if (gpio_get_value(73) == 0)
+	{
 		if (plat->otg_mode && otg_is_okay(i)) {
 			tegra_otg_platform.usb_property = p;
 			platform_device_register(&tegra_otg);
 		}
-#endif
+	}
+
 		if (p->IdPinDetectionType == NvOdmUsbIdPinType_Gpio) {
 			const NvOdmGpioPinInfo *gpio;
 			NvU32 count;
