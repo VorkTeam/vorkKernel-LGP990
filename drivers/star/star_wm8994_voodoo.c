@@ -38,6 +38,10 @@ typedef struct star_wm8994_device_data {
 
 static star_wm8994_device *g_wm8994;
 
+/* ASoC code compatibilty */
+
+int codec = 0;
+
 static NvBool
 WriteWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex, NvU32 Data)
 {
@@ -128,40 +132,11 @@ static NvBool ReadWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex,
 	return NV_TRUE;
 }
 
-static ssize_t wm8994_reg_show(struct device *dev,
-			       struct device_attribute *attr, char *buf)
+unsigned int wm8994_read(int codec, unsigned int reg)
 {
-	int r = 0;
-	int cnt = 0;
 	NvU32 r_data;
-	for (cnt = 0; cnt < 0x60; cnt++) {
-		ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-		r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt,
-			     r_data);
-	}
-	cnt = 0x0210;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0420;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0601;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0610;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0611;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0200;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-	cnt = 0x0208;
-	ReadWolfsonRegister(g_wm8994, cnt, &r_data);
-	r += sprintf(buf + r, "wm8994 reg 0x%4x : 0x%4x\n", cnt, r_data);
-
-	return r;
+	ReadWolfsonRegister(g_wm8994, reg, &r_data);
+	return r_data;
 }
 
 ssize_t wm8994_reg_store(struct device * dev, struct device_attribute * attr,
@@ -185,7 +160,88 @@ ssize_t wm8994_reg_store(struct device * dev, struct device_attribute * attr,
 	return count;
 }
 
-static DEVICE_ATTR(data_voodoo, 0666, wm8994_reg_show, wm8994_reg_store);
+/* Custom Code */
+
+static ssize_t show_wm8994_register_dump(struct device *dev,
+					 struct device_attribute *attr,
+					 char *buf)
+{
+	// modified version of register_dump from wm8994_aries.c
+	// r = wm8994 register
+	int r;
+
+	for (r = 0; r <= 0x6; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x15, wm8994_read(codec, 0x15));
+
+	for (r = 0x18; r <= 0x3C; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x4C, wm8994_read(codec, 0x4C));
+
+	for (r = 0x51; r <= 0x5C; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x60, wm8994_read(codec, 0x60));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x101, wm8994_read(codec, 0x101));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x110, wm8994_read(codec, 0x110));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x111, wm8994_read(codec, 0x111));
+
+	for (r = 0x200; r <= 0x212; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x220; r <= 0x224; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x240; r <= 0x244; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x300; r <= 0x317; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x400; r <= 0x411; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x420; r <= 0x423; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x440; r <= 0x444; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x450; r <= 0x454; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x480; r <= 0x493; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x4A0; r <= 0x4B3; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x500; r <= 0x503; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x510, wm8994_read(codec, 0x510));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x520, wm8994_read(codec, 0x520));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x521, wm8994_read(codec, 0x521));
+
+	for (r = 0x540; r <= 0x544; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x580; r <= 0x593; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	for (r = 0x600; r <= 0x614; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x620, wm8994_read(codec, 0x620));
+	sprintf(buf, "%s0x%X 0x%X\n", buf, 0x621, wm8994_read(codec, 0x621));
+
+	for (r = 0x700; r <= 0x70A; r++)
+		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
+
+	return sprintf(buf, "%s", buf);
+}
 
 ssize_t wm8994_wakelock_store(struct device *dev, struct device_attribute *attr,
 			      const char *buf, size_t count)
@@ -222,7 +278,7 @@ void star_headsetdet_bias(int bias)
 	return;
 }
 
-static DEVICE_ATTR(wm8994_register_dump, S_IRUGO, wm8994_reg_show, NULL);
+static DEVICE_ATTR(wm8994_register_dump, S_IRUGO, show_wm8994_register_dump, NULL);
 
 static struct attribute *voodoo_sound_attributes[] = {
 	&dev_attr_wm8994_register_dump.attr,
@@ -273,6 +329,7 @@ static int __init voodoo_sound_init(void)
 		pr_err("Failed to create sysfs group for (%s)!\n",
 		       voodoo_sound_device.name);
 	}
+
 	return 0;
 }
 
