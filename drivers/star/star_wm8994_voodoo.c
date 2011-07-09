@@ -134,7 +134,7 @@ static NvBool ReadWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex,
 
 unsigned int wm8994_read(int codec, unsigned int reg)
 {
-	NvU32 r_data;
+	NvU32 r_data = 0;
 	ReadWolfsonRegister(g_wm8994, reg, &r_data);
 	return r_data;
 }
@@ -241,41 +241,6 @@ static ssize_t show_wm8994_register_dump(struct device *dev,
 		sprintf(buf, "%s0x%X 0x%X\n", buf, r, wm8994_read(codec, r));
 
 	return sprintf(buf, "%s", buf);
-}
-
-ssize_t wm8994_wakelock_store(struct device *dev, struct device_attribute *attr,
-			      const char *buf, size_t count)
-{
-	unsigned int n, lock;
-
-	n = sscanf(buf, "%u", &lock);
-	if (n != 1)
-		return -1;
-
-	if ((bool) lock) {
-		wake_lock(&g_wm8994->wm8994_wake_lock);
-	} else {
-		wake_unlock(&g_wm8994->wm8994_wake_lock);
-	}
-
-	return count;
-}
-
-static DEVICE_ATTR(wm8994_wakelock_voodoo, 0666, NULL, wm8994_wakelock_store);
-
-void star_headsetdet_bias(int bias)
-{
-	NvU32 r_data = 0;
-	ReadWolfsonRegister(g_wm8994, 0x0001, &r_data);
-	if (bias == 0) {
-		r_data = r_data & (~0x0020);
-		printk("star_headsetdet_bias headset disabled %4x\n", r_data);
-	} else {
-		r_data = r_data | (0x0020);
-		printk("star_headsetdet_bias headset enabled %4x\n", r_data);
-	}
-	WriteWolfsonRegister(g_wm8994, 0x0001, r_data);
-	return;
 }
 
 static DEVICE_ATTR(wm8994_register_dump, S_IRUGO, show_wm8994_register_dump, NULL);
