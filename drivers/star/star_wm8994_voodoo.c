@@ -39,8 +39,10 @@ typedef struct star_wm8994_device_data {
 static star_wm8994_device *g_wm8994;
 
 /* ASoC code compatibilty */
-
 int codec = 0;
+
+/* Voodoo Sound Samsung compatibilty */
+bool bypass_write_hook = false;
 
 static NvBool
 WriteWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex, NvU32 Data)
@@ -63,8 +65,8 @@ WriteWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex, NvU32 Data)
 		TransactionInfo.Flags = NVODM_I2C_IS_WRITE;
 		TransactionInfo.NumBytes = 4;
 
-		printk("Voodoo sound: RegIndex: 0x%X, Data: 0x%X\n", RegIndex,
-		       Data);
+		printk("Voodoo sound: WriteWolfsonRegister()\tRegIndex: 0x%X,"
+		       "Data: 0x%X\n", RegIndex, Data);
 
 		I2cTransStatus =
 		    NvOdmI2cTransaction(wm8994->h_gen2_i2c, &TransactionInfo, 1,
@@ -132,6 +134,8 @@ static NvBool ReadWolfsonRegister(star_wm8994_device * wm8994, NvU32 RegIndex,
 	return NV_TRUE;
 }
 
+/* Custom Code */
+
 unsigned int wm8994_read(int codec, unsigned int reg)
 {
 	NvU32 r_data = 0;
@@ -139,28 +143,11 @@ unsigned int wm8994_read(int codec, unsigned int reg)
 	return r_data;
 }
 
-ssize_t wm8994_reg_store(struct device * dev, struct device_attribute * attr,
-			 const char *buf, size_t count)
+int wm8994_write(int codec, unsigned int reg, unsigned int value)
 {
-	int reg, data;
-	char *r, *d;
-
-	r = &buf[0];
-	d = &buf[7];
-
-	reg = simple_strtoul(r, NULL, 16);
-	data = simple_strtoul(d, NULL, 16);
-
-	if (reg == 0) {
-		return count;	//bolck reset cmd.
-	} else {
-		WriteWolfsonRegister(g_wm8994, reg, data);
-	}
-
-	return count;
+	WriteWolfsonRegister(g_wm8994, reg, value);
+	return 0;
 }
-
-/* Custom Code */
 
 static ssize_t show_wm8994_register_dump(struct device *dev,
 					 struct device_attribute *attr,
@@ -243,10 +230,37 @@ static ssize_t show_wm8994_register_dump(struct device *dev,
 	return sprintf(buf, "%s", buf);
 }
 
-static DEVICE_ATTR(wm8994_register_dump, S_IRUGO, show_wm8994_register_dump, NULL);
+static ssize_t store_wm8994_write(struct device *dev,
+				  struct device_attribute *attr,
+				  const char *buf, size_t size)
+{
+	short unsigned int reg = 0;
+	short unsigned int val = 0;
+	int unsigned bytes_read = 0;
+
+	while (sscanf(buf, "%hx %hx%n", &reg, &val, &bytes_read) == 2) {
+		buf += bytes_read;
+		printk("Voodoo sound: read from sysfs: %X, %X\n",
+		       reg, val);
+
+		bypass_write_hook = true;
+		wm8994_write(codec, reg, val);
+		bypass_write_hook = false;
+	}
+	return size;
+}
+
+static DEVICE_ATTR(wm8994_register_dump, S_IRUGO,
+		   show_wm8994_register_dump,
+		   NULL);
+
+static DEVICE_ATTR(wm8994_write, S_IWUSR,
+		   NULL,
+		   store_wm8994_write);
 
 static struct attribute *voodoo_sound_attributes[] = {
 	&dev_attr_wm8994_register_dump.attr,
+	&dev_attr_wm8994_write.attr,
 	NULL
 };
 
