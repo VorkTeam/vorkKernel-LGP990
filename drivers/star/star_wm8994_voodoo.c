@@ -1,29 +1,10 @@
-
-#include <linux/module.h>
-#include <linux/platform_device.h>
-#include <linux/kthread.h>
-#include <linux/device.h>
-#include <linux/kernel.h>
-//#include <linux/tegra_devices.h>      //20100716  blocking for compile error [LGE]
-
-#include <nvodm_services.h>
-
-#include <linux/interrupt.h>
 #include <linux/i2c.h>
-#include <linux/slab.h>
-#include <linux/irq.h>
 #include <linux/miscdevice.h>
-#include <asm/uaccess.h>
-#include <linux/delay.h>
-#include <linux/input.h>
-#include <linux/workqueue.h>
 
-#include <linux/kobject.h>
 #include "nvcommon.h"
 #include "nvodm_services.h"
 #include "nvodm_query.h"
 #include "nvodm_query_discovery.h"
-#include <linux/wakelock.h>
 
 #define WM8994_I2C_RETRY_COUNT 5
 #define WM8994_I2C_TIMEOUT 20
@@ -33,7 +14,6 @@
 typedef struct star_wm8994_device_data {
 	NvOdmServicesI2cHandle h_gen2_i2c;
 	NvU32 i2c_address;
-	struct wake_lock wm8994_wake_lock;
 } star_wm8994_device;
 
 static star_wm8994_device *g_wm8994;
