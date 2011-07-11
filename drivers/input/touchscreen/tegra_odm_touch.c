@@ -126,6 +126,7 @@ ssize_t touch_gripsuppression_store(struct device *dev, struct device_attribute 
 	value = simple_strtoul(&input[0], '\0', 10);
 
 	setTouchGripSuppressionValue(value);
+	printk("[TOUCH] GRIP-SUPPRESSION= %d\n",value);
 
 	kfree(input);
 	return count;
@@ -348,6 +349,27 @@ static int tegra_touch_thread(void *pdata)
 
 				goto DoneWithSample;
 			}
+
+#ifdef FEATURE_LGE_TOUCH_EXPAND_HIDDEN_ACTIVE_AREA
+			for (i = 0; i < LGE_SUPPORT_FINGERS_NUM; i++)
+			{
+				if(c.additionalInfo.multi_XYCoords[i][0] < LGE_TOUCH_RESOLUTION_X && c.additionalInfo.multi_XYCoords[i][0] >= LGE_TOUCH_RESOLUTION_X - 1) 
+				{
+					touch_fingerprint(DebugMsgPrint, "[TOUCH] DEBUG: clipping by 1 from X= %d\n",c.additionalInfo.multi_XYCoords[i][0]);
+					c.additionalInfo.multi_XYCoords[i][0] = LGE_TOUCH_RESOLUTION_X - 1 - 1;
+				}
+				if(c.additionalInfo.multi_XYCoords[i][1] < TOUCH_LCD_ACTIVE_AREA_Y && c.additionalInfo.multi_XYCoords[i][1] >= LGE_TOUCH_RESOLUTION_Y - 1) 
+				{
+					touch_fingerprint(DebugMsgPrint, "[TOUCH] DEBUG: clipping by 1 from Y= %d\n",c.additionalInfo.multi_XYCoords[i][1]);
+					c.additionalInfo.multi_XYCoords[i][1] = LGE_TOUCH_RESOLUTION_Y - 1 - 1;
+				}
+				else if(c.additionalInfo.multi_XYCoords[i][1] < TOUCH_BUTTON_AREA_Y && c.additionalInfo.multi_XYCoords[i][1] >= TOUCH_LCD_ACTIVE_AREA_Y ) 
+				{
+					touch_fingerprint(DebugMsgPrint, "[TOUCH] DEBUG: dead zone Y= %d\n",c.additionalInfo.multi_XYCoords[i][1]);
+					c.additionalInfo.multi_fingerstate[i] = 0;
+				}
+			}
+#endif /* FEATURE_LGE_TOUCH_EXPAND_HIDDEN_ACTIVE_AREA */
 
 			if (c.fingerstate & NvOdmTouchSampleIgnore)
 			{

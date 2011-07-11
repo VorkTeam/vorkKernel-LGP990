@@ -71,8 +71,8 @@ typedef struct NvOdmTouchDeviceRec *NvOdmTouchDeviceHandle;
 #ifdef CONFIG_MACH_STAR
 #define FEATURE_LGE_TOUCH_CUSTOMIZE
 //#define FEATURE_LGE_TOUCH_DUAL_SUPPORT	// 20101113  prevent chip damage, only use synaptics touch
-#define FEATURE_LGE_TOUCH_GRIP_SUPPRESSION
-//#define FEATURE_LGE_TOUCH_EXPAND_HIDDEN_ACTIVE_AREA
+//#define FEATURE_LGE_TOUCH_GRIP_SUPPRESSION
+#define FEATURE_LGE_TOUCH_EXPAND_HIDDEN_ACTIVE_AREA
 #define FEATURE_LGE_TOUCH_MOVING_IMPROVE
 #endif
 
@@ -86,7 +86,7 @@ typedef struct NvOdmTouchDeviceRec *NvOdmTouchDeviceHandle;
 #define TOUCH_EVENT_BUTTON					1
 #define TOUCH_EVENT_ABS						2
 
-#define TOUCH_BUTTON_AREA_Y					830//843
+#define TOUCH_BUTTON_AREA_Y					843
 
 #define NVODM_MAX_INPUT_COORDS				LGE_SUPPORT_FINGERS_NUM
 #else
@@ -102,7 +102,7 @@ int getTouchGripSuppressionValue(void);
 
 // 20100720  LCD Active area expansion [START]
 #ifdef FEATURE_LGE_TOUCH_EXPAND_HIDDEN_ACTIVE_AREA
-#define TOUCH_LCD_ACTIVE_AREA_Y				(LGE_TOUCH_RESOLUTION_Y + 20)
+#define TOUCH_LCD_ACTIVE_AREA_Y				(LGE_TOUCH_RESOLUTION_Y + 32)
 #else
 #define TOUCH_LCD_ACTIVE_AREA_Y				(LGE_TOUCH_RESOLUTION_Y)
 #endif
