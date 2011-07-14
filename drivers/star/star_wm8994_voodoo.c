@@ -10,6 +10,8 @@
 #include "star_wm8994_voodoo.h"
 #include "wm8994.h"
 
+static star_wm8994_device *g_wm8994;
+
 /* ASoC code compatibilty */
 int codec = 0;
 
@@ -19,6 +21,9 @@ bool bypass_write_hook = false;
 short unsigned int debug_log_level = LOG_OFF;
 unsigned short hp_level[2] = { CONFIG_SND_VOODOO_HP_LEVEL,
 			       CONFIG_SND_VOODOO_HP_LEVEL };
+
+// global active or kill switch
+bool enable = false;
 
 /*
  * Some functions borrowed from LG's star_wm8994.c
@@ -122,6 +127,9 @@ unsigned int wm8994_read(int codec, unsigned int reg)
 
 int wm8994_write(int codec, unsigned int reg, unsigned int value)
 {
+	if (!enable);
+		return 0;
+
 	WriteWolfsonRegister(g_wm8994, reg, value);
 	return 0;
 }
@@ -227,6 +235,9 @@ void update_hpvol(bool with_fade)
 unsigned int voodoo_hook_wm8994_write(int codec,
 				      unsigned int reg, unsigned int value)
 {
+	// kill switch
+	if (!enable)
+		return value;
 
 	if (reg == WM8994_LEFT_OUTPUT_VOLUME)
 		value =
@@ -243,9 +254,44 @@ unsigned int voodoo_hook_wm8994_write(int codec,
 	return value;
 }
 
+
+void update_enable()
+{
+	if (enable)
+		voodoo_sound_misc_register();
+	else
+		voodoo_sound_misc_deregister();
+}
+
 /*
  * misc control functions
  */
+
+#define DECLARE_BOOL_SHOW(name) 					       \
+static ssize_t name##_show(struct device *dev,				       \
+struct device_attribute *attr, char *buf)				       \
+{									       \
+	return sprintf(buf,"%u\n",(name ? 1 : 0));			       \
+}
+
+#ifndef MODULE
+DECLARE_BOOL_SHOW(enable);
+static ssize_t enable_store(struct device *dev,
+			    struct device_attribute *attr, const char *buf,
+			    size_t size)
+{
+	unsigned short state;
+	bool bool_state;
+	if (sscanf(buf, "%hu", &state) == 1) {
+		bool_state = state == 0 ? false : true;
+		if (state != enable) {
+			enable = bool_state;
+			update_enable();
+		}
+	}
+	return size;
+}
+#endif
 
 static ssize_t debug_log_show(struct device *dev,
 			      struct device_attribute *attr,
@@ -422,6 +468,12 @@ static DEVICE_ATTR(version, S_IRUGO,
 		   voodoo_sound_version,
 		   NULL);
 
+#ifndef MODULE
+static DEVICE_ATTR(enable, S_IRUGO | S_IWUGO,
+		   enable_show,
+		   enable_store);
+#endif
+
 static struct attribute *voodoo_sound_attributes[] = {
 	&dev_attr_debug_log.attr,
 	&dev_attr_headphone_amplifier_level.attr,
@@ -434,22 +486,57 @@ static struct attribute *voodoo_sound_attributes[] = {
 	NULL
 };
 
+#ifndef MODULE
+static struct attribute *voodoo_sound_control_attributes[] = {
+	&dev_attr_enable.attr,
+	NULL
+};
+#endif
+
 static struct attribute_group voodoo_sound_group = {
 	.attrs = voodoo_sound_attributes,
 };
+
+#ifndef MODULE
+static struct attribute_group voodoo_sound_control_group = {
+	.attrs = voodoo_sound_control_attributes,
+};
+#endif
 
 static struct miscdevice voodoo_sound_device = {
 	.minor = MISC_DYNAMIC_MINOR,
 	.name = "voodoo_sound",
 };
 
+#ifndef MODULE
+static struct miscdevice voodoo_sound_control_device = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name = "voodoo_sound_control",
+};
+#endif
+
 /**
  * All the device spefic initializations happen here. 
  */
 
+void voodoo_sound_misc_register() {
+	misc_register(&voodoo_sound_device);
+	if (sysfs_create_group(&voodoo_sound_device.this_device->kobj,
+			       &voodoo_sound_group) < 0) {
+		printk("%s sysfs_create_group fail\n", __FUNCTION__);
+		pr_err("Failed to create sysfs group for (%s)!\n",
+		       voodoo_sound_device.name);
+	}
+}
+
+void voodoo_sound_misc_deregister(void) {
+	sysfs_remove_group(&voodoo_sound_device.this_device->kobj,
+			   &voodoo_sound_group);
+	misc_deregister(&voodoo_sound_device);
+}
+
 int voodoo_sound_init(void)
 {
-
 	NvS32 err = 0;
 
 	const NvOdmPeripheralConnectivity *pcon = NULL;
@@ -471,13 +558,18 @@ int voodoo_sound_init(void)
 		return err;
 	}
 
-	misc_register(&voodoo_sound_device);
-	if (sysfs_create_group(&voodoo_sound_device.this_device->kobj,
-			       &voodoo_sound_group) < 0) {
+	voodoo_sound_misc_register();
+
+#ifndef MODULE
+	misc_register(&voodoo_sound_control_device);
+	if (sysfs_create_group(&voodoo_sound_control_device.this_device->kobj,
+			       &voodoo_sound_control_group) < 0) {
 		printk("%s sysfs_create_group fail\n", __FUNCTION__);
-		pr_err("Failed to create sysfs group for (%s)!\n",
-		       voodoo_sound_device.name);
+		pr_err("Failed to create sysfs group for device (%s)!\n",
+		       voodoo_sound_control_device.name);
 	}
+#endif
+	enable = true;
 
 	return 0;
 }
@@ -485,10 +577,7 @@ int voodoo_sound_init(void)
 void voodoo_sound_exit(void)
 {
 	printk("Voodoo sound: removing driver v%d\n", VOODOO_SOUND_VERSION);
-
-	sysfs_remove_group(&voodoo_sound_device.this_device->kobj,
-			   &voodoo_sound_group);
-	misc_deregister(&voodoo_sound_device);
+	voodoo_sound_misc_deregister();
 }
 
 #ifndef MODULE
