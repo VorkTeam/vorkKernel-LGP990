@@ -127,7 +127,7 @@ unsigned int wm8994_read(int codec, unsigned int reg)
 
 int wm8994_write(int codec, unsigned int reg, unsigned int value)
 {
-	if (!enable);
+	if (!enable)
 		return 0;
 
 	WriteWolfsonRegister(g_wm8994, reg, value);
