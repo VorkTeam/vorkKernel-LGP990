@@ -130,6 +130,10 @@ int wm8994_write(int codec, unsigned int reg, unsigned int value)
 	if (!enable)
 		return 0;
 
+	if (debug_log(LOG_VERBOSE))
+		printk("Voodoo sound: internal wm8994_write 0x%03X 0x%04X\n",
+		       reg, value);
+
 	WriteWolfsonRegister(g_wm8994, reg, value);
 	return 0;
 }
