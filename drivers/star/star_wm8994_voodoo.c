@@ -152,8 +152,8 @@ int hpvol(int channel)
 
 	vol = hp_level[channel];
 
-	if (vol > 62)
-		return 62;
+	if (vol > MAX_HP_AMP_LEVEL)
+		return MAX_HP_AMP_LEVEL;
 
 	return vol;
 }
@@ -327,9 +327,9 @@ static ssize_t headphone_amplifier_level_store(struct device *dev,
 	unsigned short vol;
 	if (sscanf(buf, "%hu", &vol) == 1) {
 
-		// hard limit to 62 because 63 introduces distortions
-		if (vol > 62)
-			vol = 62;
+		// hard limit to MAX_HP_AMP_LEVEL because 63 introduces distortions
+		if (vol > MAX_HP_AMP_LEVEL)
+			vol = MAX_HP_AMP_LEVEL;
 
 		// left and right are set to the same volumes by this control
 		hp_level[0] = hp_level[1] = vol;
@@ -337,6 +337,13 @@ static ssize_t headphone_amplifier_level_store(struct device *dev,
 		update_hpvol(true);
 	}
 	return size;
+}
+
+static ssize_t headphone_amplifier_level_max_show(struct device *dev,
+						  struct device_attribute *attr,
+						  char *buf)
+{
+	return sprintf(buf, "%u\n", MAX_HP_AMP_LEVEL);
 }
 
 static ssize_t show_wm8994_register_dump(struct device *dev,
@@ -454,6 +461,10 @@ static DEVICE_ATTR(headphone_amplifier_level, S_IRUGO | S_IWUGO,
 		   headphone_amplifier_level_show,
 		   headphone_amplifier_level_store);
 
+static DEVICE_ATTR(headphone_amplifier_level_max, S_IRUGO,
+		   headphone_amplifier_level_max_show,
+		   NULL);
+
 static DEVICE_ATTR(wm8994_register_dump, S_IRUGO,
 		   show_wm8994_register_dump,
 		   NULL);
@@ -481,6 +492,7 @@ static DEVICE_ATTR(enable, S_IRUGO | S_IWUGO,
 static struct attribute *voodoo_sound_attributes[] = {
 	&dev_attr_debug_log.attr,
 	&dev_attr_headphone_amplifier_level.attr,
+	&dev_attr_headphone_amplifier_level_max.attr,
 	&dev_attr_wm8994_register_dump.attr,
 	&dev_attr_wm8994_write.attr,
 #ifdef MODULE

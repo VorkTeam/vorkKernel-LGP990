@@ -11,6 +11,8 @@ typedef struct star_wm8994_device_data {
 } star_wm8994_device;
 
 #define CONFIG_SND_VOODOO_HP_LEVEL 48
+#define MAX_HP_AMP_LEVEL 54
+
 enum debug_log { LOG_OFF, LOG_INFOS, LOG_VERBOSE };
 bool debug_log(short unsigned int level);
 
