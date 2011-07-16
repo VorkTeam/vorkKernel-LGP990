@@ -248,7 +248,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Combine AVP/System clock absolute limit with scaling V/F ladder upper
     // boundary, and set default clock range for all present modules the same
     // as for AVP/System clock
-    AvpMaxKHz = 266400;
+    AvpMaxKHz = 280000;
 
 //    AvpMaxKHz = pSKUedLimits->AvpMaxKHz;
 //    for (i = 0; i < pShmoo->ScaledLimitsListSize; i++)
@@ -296,6 +296,12 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
             s_pClockScales[id] = pHwLimits[i].MaxKHzList;
         }
     }
+
+s_ClockRangeLimits[2].MaxKHz = 280000;
+s_ClockRangeLimits[7].MaxKHz = 350000;
+s_ClockRangeLimits[8].MaxKHz = 350000;
+s_ClockRangeLimits[10].MaxKHz = 350000;
+
     // Fill in CPU scaling data if SoC has dedicated CPU rail, and CPU clock
     // characterization data is separated from other modules on common core rail
     if (s_ChipFlavor.pCpuShmoo)
@@ -372,14 +378,10 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
         NVRM_SDRAM_MIN_KHZ;
 
     // Set 3D upper clock boundary with combined Absolute/Scaled limit.
-#ifdef CONFIG_USE_FAKE_SHMOO_PSYCHO
-    TDMaxKHz = 400000;
-#else
-    TDMaxKHz = pSKUedLimits->TDMaxKHz;
+    TDMaxKHz = 350000; //pSKUedLimits->TDMaxKHz;
     TDMaxKHz = NV_MIN(
         TDMaxKHz, s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
-#endif
-    s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = TDMaxKHz;
+    s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = 350000; //TDMaxKHz;
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
     // (fill in clock limits for both display heads)
