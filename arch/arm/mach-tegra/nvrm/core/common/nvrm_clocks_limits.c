@@ -322,17 +322,14 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Set VDE upper clock boundary with combined Absolute/Scaled limit (on
     // AP15/Ap16 VDE clock derived from the system bus, and VDE maximum limit
     // must be the same as AVP/System).
-#ifdef CONFIG_USE_FAKE_SHMOO_PSYCHO
-    VdeMaxKHz = 266400;
-#else
-    VdeMaxKHz = pSKUedLimits->VdeMaxKHz;
-    VdeMaxKHz = NV_MIN(
-        VdeMaxKHz, s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
-#endif
-    if ((hRmDevice->ChipId.Id == 0x15) || (hRmDevice->ChipId.Id == 0x16))
-    {
-        NV_ASSERT(VdeMaxKHz == AvpMaxKHz);
-    }
+//    VdeMaxKHz = pSKUedLimits->VdeMaxKHz;
+//    VdeMaxKHz = NV_MIN(
+//        VdeMaxKHz, s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
+//    if ((hRmDevice->ChipId.Id == 0x15) || (hRmDevice->ChipId.Id == 0x16))
+//    {
+//        NV_ASSERT(VdeMaxKHz == AvpMaxKHz);
+//    }
+    VdeMaxKHz = AvpMaxKHz;
     s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz = VdeMaxKHz;
 
     // Set upper clock boundaries for devices on CPU bus (CPU, Mselect,
