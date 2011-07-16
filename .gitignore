@@ -59,6 +59,7 @@ include/linux/version.h
 include/linux/utsrelease.h
 include/linux/bounds.h
 arch/arm/mach-msm/smd_rpc_sym.c
+arch/arm/boot/compressed/lib1funcs.S
 include/generated
 
 # stgit generated dirs
