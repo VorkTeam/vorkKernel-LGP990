@@ -1005,7 +1005,7 @@ NvRmPrivContentProtectionFuses( NvRmDeviceHandle hRm )
 }
 
 // Safe PLLM (max 1000MHz) divider for GPU modules
-#define NVRM_SAFE_GPU_DIVIDER (10)
+#define NVRM_SAFE_GPU_DIVIDER (6)
 
 void
 NvRmPrivAp20Reset2D(NvRmDeviceHandle hRmDevice)
