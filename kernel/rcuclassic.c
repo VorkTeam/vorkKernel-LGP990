@@ -48,13 +48,10 @@
 #include <linux/mutex.h>
 #include <linux/time.h>
 #include <linux/kernel_stat.h>
+#include "rcutiny_plugin.h"
 
-#ifdef CONFIG_DEBUG_LOCK_ALLOC
-static struct lock_class_key rcu_lock_key;
-struct lockdep_map rcu_lock_map =
-	STATIC_LOCKDEP_MAP_INIT("rcu_read_lock", &rcu_lock_key);
-EXPORT_SYMBOL_GPL(rcu_lock_map);
-#endif
+int rcu_scheduler_active __read_mostly;
+EXPORT_SYMBOL_GPL(rcu_scheduler_active);
 
 /* Definition for rcupdate control block. */
 static struct rcu_ctrlblk rcu_ctrlblk = {
@@ -76,9 +73,6 @@ static struct rcu_ctrlblk rcu_bh_ctrlblk = {
 static DEFINE_PER_CPU(struct rcu_data, rcu_data);
 static DEFINE_PER_CPU(struct rcu_data, rcu_bh_data);
 
-int rcu_scheduler_active __read_mostly;
-EXPORT_SYMBOL_GPL(rcu_scheduler_active);
-
 /*
  * Increment the quiescent state counter.
  * The counter is a bit degenerated: We do not need to know
@@ -95,15 +89,6 @@ void rcu_bh_qs(int cpu)
 {
 	struct rcu_data *rdp = &per_cpu(rcu_bh_data, cpu);
 	rdp->passed_quiesc = 1;
-}
-
-/*
- * Note a context switch.  This is a quiescent state for RCU-sched,
- * and requires special handling for preemptible RCU.
- */
-void rcu_note_context_switch(int cpu)
-{
-        rcu_sched_qs(cpu);
 }
 
 static int blimit = 10;
@@ -399,31 +384,43 @@ void rcu_barrier(void)
 {
 	struct rcu_synchronize rcu;
 
-	if (num_online_cpus() == 1)
-		return;  /* blocking is gp if only one CPU! */
-
+	init_rcu_head_on_stack(&rcu.head);
 	init_completion(&rcu.completion);
 	/* Will wake me after RCU finished. */
 	call_rcu(&rcu.head, wakeme_after_rcu);
 	/* Wait for it. */
 	wait_for_completion(&rcu.completion);
+	destroy_rcu_head_on_stack(&rcu.head);
 }
 EXPORT_SYMBOL_GPL(rcu_barrier);
 
 void rcu_barrier_bh(void)
 {
-        struct rcu_synchronize rcu;
+	struct rcu_synchronize rcu;
 
-        if (num_online_cpus() == 1)
-                return;  /* blocking is gp if only one CPU! */
-
-        init_completion(&rcu.completion);
-        /* Will wake me after RCU finished. */
-        call_rcu(&rcu.head, wakeme_after_rcu);
-        /* Wait for it. */
-        wait_for_completion(&rcu.completion);
+	init_rcu_head_on_stack(&rcu.head);
+	init_completion(&rcu.completion);
+	/* Will wake me after RCU finished. */
+	call_rcu_bh(&rcu.head, wakeme_after_rcu);
+	/* Wait for it. */
+	wait_for_completion(&rcu.completion);
+	destroy_rcu_head_on_stack(&rcu.head);
 }
 EXPORT_SYMBOL_GPL(rcu_barrier_bh);
+
+void rcu_barrier_sched(void)
+{
+	struct rcu_synchronize rcu;
+
+	init_rcu_head_on_stack(&rcu.head);
+	init_completion(&rcu.completion);
+	/* Will wake me after RCU finished. */
+	call_rcu_sched(&rcu.head, wakeme_after_rcu);
+	/* Wait for it. */
+	wait_for_completion(&rcu.completion);
+	destroy_rcu_head_on_stack(&rcu.head);
+}
+EXPORT_SYMBOL_GPL(rcu_barrier_sched);
 
 /*
  * Return the number of RCU batches processed thus far.  Useful
@@ -893,21 +890,6 @@ int __cpuinit rcu_cpu_notify(struct notifier_block *self,
 static struct notifier_block __cpuinitdata rcu_nb = {
 	.notifier_call	= rcu_cpu_notify,
 };
-
-/*
- * This function is invoked towards the end of the scheduler's initialization
- * process.  Before this is called, the idle task might contain
- * RCU read-side critical sections (during which time, this idle
- * task is booting the system).  After this function is called, the
- * idle tasks are prohibited from containing RCU read-side critical
- * sections.  This function also enables RCU lockdep checking.
- */
-void rcu_scheduler_starting(void)
-{
-        WARN_ON(num_online_cpus() != 1);
-        WARN_ON(nr_context_switches() > 0);
-        rcu_scheduler_active = 1;
-}
 
 /*
  * Initializes rcu mechanism.  Assumed to be called early.

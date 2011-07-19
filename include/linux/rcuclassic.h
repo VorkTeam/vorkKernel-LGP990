@@ -114,18 +114,23 @@ struct rcu_data {
  * how many quiescent states passed, just if there was at least
  * one since the start of the grace period. Thus just a flag.
  */
+extern void synchronize_sched(void);
 extern void rcu_sched_qs(int cpu);
 extern void rcu_bh_qs(int cpu);
-extern void rcu_note_context_switch(int cpu);
-extern void synchronize_rcu(void);
-extern void rcu_scheduler_starting(void);
 
 extern int rcu_pending(int cpu);
 extern int rcu_needs_cpu(int cpu);
 extern int rcu_cpu_notify(struct notifier_block *self,
 			  unsigned long action, void *hcpu);
 
+static inline void rcu_note_context_switch(int cpu)
+{
+	rcu_sched_qs(cpu);
+}
+
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
+extern int rcu_scheduler_active __read_mostly;
+extern void rcu_scheduler_starting(void);
 extern struct lockdep_map rcu_lock_map;
 # define rcu_read_acquire()	\
 			lock_acquire(&rcu_lock_map, 0, 0, 2, 1, NULL, _THIS_IP_)
@@ -133,6 +138,11 @@ extern struct lockdep_map rcu_lock_map;
 #else
 # define rcu_read_acquire()	do { } while (0)
 # define rcu_read_release()	do { } while (0)
+
+static inline void rcu_scheduler_starting(void)
+{
+}
+
 #endif
 
 #define __rcu_read_lock() \
@@ -160,17 +170,23 @@ extern struct lockdep_map rcu_lock_map;
 		local_bh_enable(); \
 	} while (0)
 
-#define synchronize_rcu synchronize_sched
-
 #define call_rcu_sched(head, func) call_rcu(head, func)
 
 #define rcu_init_sched()	do { } while (0)
 
-extern void synchronize_rcu_expedited(void);
+static inline void synchronize_rcu(void)
+{
+	synchronize_sched();
+}
+
+static inline void synchronize_rcu_expedited(void)
+{
+        synchronize_sched();
+}
 
 static inline void synchronize_rcu_bh_expedited(void)
 {
-        synchronize_sched_expedited();
+        synchronize_sched();
 }
 
 extern void rcu_check_callbacks(int cpu, int user);
