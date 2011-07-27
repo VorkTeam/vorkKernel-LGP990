@@ -8,7 +8,7 @@
 # mm stuff
 #define dirty_background_ratio_default 2
 #define vm_dirty_ratio_default 4
-#define inactive_file_ratio 20
+#define inactive_file_ratio_default 20
 
 # cfs stuff
 #define sysctl_sched_latency_default 3200000ULL

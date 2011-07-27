@@ -40,79 +40,13 @@
 #include "nvrm_memmgr.h"
 #include "ap15/ap15rm_private.h"
 #include "ap15/project_relocation_table.h"
-
-#define USE_FAKE_SHMOO
+#include <linux/vorkKernel.h>
 
 #ifdef USE_FAKE_SHMOO
 #include <linux/kernel.h>
 
-/* 
- * TEGRA AP20 CPU OC/UV Hack by Cpasjuste @ https://github.com/Cpasjuste/android_kernel_lg_p990
-*/
-
-/* DEFAULT LG P990 VALUES */
-
-// Maximum recommanded voltage increment per step (by nvidia) -> 100mV 
-
-// TEGRA_OC: max cpu low temp: -64
-// TEGRA_OC: max cpu high temp: 60
-// TEGRA_OC: min mV -> 770
-// TEGRA_OC: max mV -> 1000
-// TEGRA_OC: mV[0]-> 750 (770 real)
-// TEGRA_OC: mV[1]-> 800
-// TEGRA_OC: mV[2]-> 850
-// TEGRA_OC: mV[3]-> 875
-// TEGRA_OC: mV[4]-> 950
-// TEGRA_OC: mV[5]-> 1000
-// TEGRA_OC: Hz[0]-> 389000
-// TEGRA_OC: Hz[1]-> 503000
-// TEGRA_OC: Hz[2]-> 655000
-// TEGRA_OC: Hz[3]-> 760000
-// TEGRA_OC: Hz[4]-> 950000
-// TEGRA_OC: Hz[5]-> 1015000
-// TEGRA_OC: Hz[6]-> 1100000 // unused
-// TEGRA_OC: Hz[7]-> 1216000 // unused
-// TEGRA_OC: HwDeviceId-> 101
-// TEGRA_OC: SubClockId-> 0
-// TEGRA_OC: MinKHz-> 32
-
 NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 
-#ifdef CONFIG_USE_FAKE_SHMOO_PSYCHO
-
-NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
-
-#define MAX_OVERCLOCK (1504000)
-
-NvU32 FakeShmooVoltages[] = {
-    750,
-    800,
-    850,
-    950,
-    1050,
-    1150,
-    1250,
-    1300,
-};
-
-NvRmScaledClkLimits FakepScaledCpuLimits = {
-    101, // FakepScaledCpuLimits.HwDeviceId
-    0, // FakepScaledCpuLimits.SubClockId
-    32, // FakepScaledCpuLimits.MinKHz
-    // Clock table
-    {
-	216000,
-    	503000,
-    	760000,
-    	1015000,
-	1100000,
-	1216000,
-	1408000,
-	1504000,
-    }
-};
-
-#else
 #define MAX_OVERCLOCK (1408000)
 
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
@@ -145,7 +79,6 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     }
 };
 
-#endif // CONFIG_USE_FAKE_SHMOO_PSYCO
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \
@@ -250,16 +183,6 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // as for AVP/System clock
     AvpMaxKHz = 280000;
 
-//    AvpMaxKHz = pSKUedLimits->AvpMaxKHz;
-//    for (i = 0; i < pShmoo->ScaledLimitsListSize; i++)
-//    {
-//        if (pHwLimits[i].HwDeviceId == NV_DEVID_AVP)
-//        {
-//            AvpMaxKHz = NV_MIN(
-//                AvpMaxKHz, pHwLimits[i].MaxKHzList[pShmoo->ShmooVmaxIndex]);
-//            break;
-//        }
-//    }
     for (i = 0; i < NvRmPrivModuleID_Num; i++)
     {
         NvRmModuleInstance *inst;
@@ -328,13 +251,7 @@ s_ClockRangeLimits[10].MaxKHz = 350000;
     // Set VDE upper clock boundary with combined Absolute/Scaled limit (on
     // AP15/Ap16 VDE clock derived from the system bus, and VDE maximum limit
     // must be the same as AVP/System).
-//    VdeMaxKHz = pSKUedLimits->VdeMaxKHz;
-//    VdeMaxKHz = NV_MIN(
-//        VdeMaxKHz, s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
-//    if ((hRmDevice->ChipId.Id == 0x15) || (hRmDevice->ChipId.Id == 0x16))
-//    {
-//        NV_ASSERT(VdeMaxKHz == AvpMaxKHz);
-//    }
+
     VdeMaxKHz = AvpMaxKHz;
     s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz = VdeMaxKHz;
 

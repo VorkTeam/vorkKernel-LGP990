@@ -75,6 +75,8 @@
 #include <linux/kthread.h>
 #include <linux/splice.h>
 
+#include <linux/vorkKernel.h>
+
 #include <asm/uaccess.h>
 
 static LIST_HEAD(loop_devices);
