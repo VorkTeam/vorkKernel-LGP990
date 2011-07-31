@@ -1048,7 +1048,7 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
     s_ClockSourceFreq[NvRmClockSource_Invalid] = 0;
     s_SystemBusComplex.BusRateOffset = 0;
     {
-        /* if (env == ExecPlatform_Fpga)
+        if (env == ExecPlatform_Fpga)
         {
             s_ClockSourceFreq[NvRmClockSource_ClkS] = 32;
             s_ClockSourceFreq[NvRmClockSource_ClkM] = fpgaModuleFreq;
@@ -1063,9 +1063,8 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
             NvRmPrivBusClockInit(
                 hRmDevice, s_ClockSourceFreq[NvRmClockSource_SystemBus]);
         }
-        //else 
-        //if ((env == ExecPlatform_Qt) || (env == ExecPlatform_Sim))
-        //{
+        else if ((env == ExecPlatform_Qt) || (env == ExecPlatform_Sim))
+        {
             s_ClockSourceFreq[NvRmClockSource_ClkS] = 32;
             if (env == ExecPlatform_Sim) // On sim set main frequency 13MHz
             {
@@ -1073,33 +1072,31 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
                 s_ClockSourceFreq[NvRmClockSource_ClkD] = 26000;
             }
             else                        // On Qt keep 12MHz
-            {*/
-                s_ClockSourceFreq[NvRmClockSource_ClkS] = 32;
+            {
                 s_ClockSourceFreq[NvRmClockSource_ClkM] = 12000;
                 s_ClockSourceFreq[NvRmClockSource_ClkD] = 24000;
-            //}
+            }
             s_ClockSourceFreq[NvRmClockSource_PllA0] =  12288;
             s_ClockSourceFreq[NvRmClockSource_PllP0] = 432000;
             s_ClockSourceFreq[NvRmClockSource_PllP1] =  28800;
             s_ClockSourceFreq[NvRmClockSource_PllP2] =  48000;
             s_ClockSourceFreq[NvRmClockSource_PllP3] =  72000;
             s_ClockSourceFreq[NvRmClockSource_PllP4] = 108000;
-            s_ClockSourceFreq[NvRmClockSource_PllC0] = 700000;
-            s_ClockSourceFreq[NvRmClockSource_PllM0] = 700000;
-            s_ClockSourceFreq[NvRmClockSource_PllX0] = 1100000;
-            s_ClockSourceFreq[NvRmClockSource_SystemBus] = 280000;
-            //NvRmPrivAp15SimPllInit(hRmDevice); // Enable plls in simulation
+            s_ClockSourceFreq[NvRmClockSource_PllC0] = 600000;
+            s_ClockSourceFreq[NvRmClockSource_PllM0] = 333000;
+            s_ClockSourceFreq[NvRmClockSource_SystemBus] = 150000;
+            NvRmPrivAp15SimPllInit(hRmDevice); // Enable plls in simulation
             NvRmPrivBusClockInit(
                 hRmDevice, s_ClockSourceFreq[NvRmClockSource_SystemBus]);
-        //}
-        //else if (env == ExecPlatform_Soc)
-        //{
-        //    NvRmPrivClockSourceFreqInit(hRmDevice, s_ClockSourceFreq);
-        //}
-        //else
-        //{
-        //    NV_ASSERT(!"Not supported execution platform");
-        //}
+        }
+        else if (env == ExecPlatform_Soc)
+        {
+            NvRmPrivClockSourceFreqInit(hRmDevice, s_ClockSourceFreq);
+        }
+        else
+        {
+            NV_ASSERT(!"Not supported execution platform");
+        }
         RmReset2D(hRmDevice);
     }
 
