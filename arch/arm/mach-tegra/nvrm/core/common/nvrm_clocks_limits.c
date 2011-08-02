@@ -315,7 +315,7 @@ s_ClockRangeLimits[10].MaxKHz = 350000;
     s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = 350000; //TDMaxKHz;
 
     NvOsDebugPrintf(
-	"NvRmModuleID_3D.MaxKhz:%d\n"
+	"NvRmModuleID_3D.MaxKhz:%d\n",
 	s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
