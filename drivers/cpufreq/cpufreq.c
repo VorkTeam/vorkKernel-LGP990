@@ -713,9 +713,7 @@ static ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf)
 	return table - buf;
 }
 
-#ifdef DISABLE_FAKE_SHMOO_UV
-/*
-#endif
+#ifndef DISABLE_FAKE_SHMOO_UV
 static ssize_t store_UV_mV_table(struct cpufreq_policy *policy, const char *buf, size_t count)
 {
 	int ret = sscanf( buf, "%i %i %i %i %i %i %i %i", &FakeShmoo_UV_mV_Ptr[7], &FakeShmoo_UV_mV_Ptr[6], 
@@ -727,8 +725,6 @@ static ssize_t store_UV_mV_table(struct cpufreq_policy *policy, const char *buf,
 
 	return count;
 }
-#ifdef DISABLE_FAKE_SHMOO_UV
-/*
 #endif
 
 #endif // USE_FAKE_SHMOO
