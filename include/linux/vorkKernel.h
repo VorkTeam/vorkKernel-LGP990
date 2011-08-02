@@ -4,6 +4,7 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
+#define DISABLE_FAKE_SHMOO_UV
 
 /* mm stuff */
 #define dirty_background_ratio_default 2

@@ -713,6 +713,9 @@ static ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf)
 	return table - buf;
 }
 
+#ifdef DISABLE_FAKE_SHMOO_UV
+/*
+#endif
 static ssize_t store_UV_mV_table(struct cpufreq_policy *policy, const char *buf, size_t count)
 {
 	int ret = sscanf( buf, "%i %i %i %i %i %i %i %i", &FakeShmoo_UV_mV_Ptr[7], &FakeShmoo_UV_mV_Ptr[6], 
@@ -724,6 +727,10 @@ static ssize_t store_UV_mV_table(struct cpufreq_policy *policy, const char *buf,
 
 	return count;
 }
+#ifdef DISABLE_FAKE_SHMOO_UV
+/*
+#endif
+
 #endif // USE_FAKE_SHMOO
 
 #define define_one_ro(_name) \
@@ -755,7 +762,11 @@ define_one_rw(scaling_setspeed);
 define_one_ro(cpu_temp);
 define_one_ro(frequency_voltage_table);
 define_one_ro(scaling_available_frequencies);
+#ifdef DISABLE_FAKE_SHMOO_UV
+define_one_ro(UV_mV_table);
+#else
 define_one_rw(UV_mV_table);
+#endif
 #endif // USE_FAKE_SHMOO
 
 static struct attribute *default_attrs[] = {
