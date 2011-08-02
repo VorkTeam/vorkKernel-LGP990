@@ -242,8 +242,22 @@ s_ClockRangeLimits[10].MaxKHz = 350000;
     // Set AVP upper clock boundary with combined Absolute/Scaled limit;
     // Sync System clock with AVP (System is not in relocation table)
     s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz = AvpMaxKHz;
+
+    NvOsDebugPrintf(
+	"avpmaxkhz:%d\n",
+	s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz);
+
+    NvOsDebugPrintf(
+	"system khz before:%d\n",
+	s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz);
+
     s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz =
         s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz;
+
+    NvOsDebugPrintf(
+	"system khz after:%d\n",
+	s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz);
+
     s_ClockRangeLimits[NvRmPrivModuleID_System].MinKHz =
         s_ClockRangeLimits[NvRmModuleID_Avp].MinKHz;
     s_pClockScales[NvRmPrivModuleID_System] = s_pClockScales[NvRmModuleID_Avp];
@@ -299,6 +313,10 @@ s_ClockRangeLimits[10].MaxKHz = 350000;
     TDMaxKHz = NV_MIN(
         TDMaxKHz, s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
     s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = 350000; //TDMaxKHz;
+
+    NvOsDebugPrintf(
+	"NvRmModuleID_3D.MaxKhz:%d\n"
+	s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
     // (fill in clock limits for both display heads)
