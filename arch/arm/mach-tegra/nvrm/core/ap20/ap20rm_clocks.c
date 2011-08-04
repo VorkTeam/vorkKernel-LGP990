@@ -45,6 +45,7 @@
 #include "ap20rm_clocks.h"
 #include "ap20/arfuse.h"
 
+#include <linux/vorkKernel.h>
 
 // This list requires pre-sorted info in bond-out registers order and bond-out
 // register bit shift order (MSB-to-LSB).
@@ -1005,7 +1006,7 @@ NvRmPrivContentProtectionFuses( NvRmDeviceHandle hRm )
 }
 
 // Safe PLLM (max 1000MHz) divider for GPU modules
-#define NVRM_SAFE_GPU_DIVIDER (6)
+#define NVRM_SAFE_GPU_DIVIDER (gpu_divider)
 
 void
 NvRmPrivAp20Reset2D(NvRmDeviceHandle hRmDevice)

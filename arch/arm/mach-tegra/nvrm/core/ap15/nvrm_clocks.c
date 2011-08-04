@@ -52,6 +52,8 @@
 #include "nvodm_query_pinmux.h"
 #include "nvodm_query_discovery.h"
 
+#include <linux/vorkKernel.h>
+
 // Module debug: 0=disable, 1=enable
 #define NVRM_ENABLE_PRINTF (0)
 
@@ -1084,10 +1086,10 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
             s_ClockSourceFreq[NvRmClockSource_PllP2] =  48000;
             s_ClockSourceFreq[NvRmClockSource_PllP3] =  72000;
             s_ClockSourceFreq[NvRmClockSource_PllP4] = 108000;
-            s_ClockSourceFreq[NvRmClockSource_PllC0] = 700000;
-            s_ClockSourceFreq[NvRmClockSource_PllM0] = 700000;
+            s_ClockSourceFreq[NvRmClockSource_PllC0] = emc_freq;
+            s_ClockSourceFreq[NvRmClockSource_PllM0] = emc_freq;
             s_ClockSourceFreq[NvRmClockSource_PllX0] = 1100000;
-            s_ClockSourceFreq[NvRmClockSource_SystemBus] = 280000;
+            s_ClockSourceFreq[NvRmClockSource_SystemBus] = avp_freq;
             //NvRmPrivAp15SimPllInit(hRmDevice); // Enable plls in simulation
             NvRmPrivBusClockInit(
                 hRmDevice, s_ClockSourceFreq[NvRmClockSource_SystemBus]);

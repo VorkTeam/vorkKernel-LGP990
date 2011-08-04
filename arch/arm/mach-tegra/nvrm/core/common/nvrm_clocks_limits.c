@@ -181,7 +181,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Combine AVP/System clock absolute limit with scaling V/F ladder upper
     // boundary, and set default clock range for all present modules the same
     // as for AVP/System clock
-    AvpMaxKHz = 280000;
+    AvpMaxKHz = avp_freq;
 
     for (i = 0; i < NvRmPrivModuleID_Num; i++)
     {
@@ -220,7 +220,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
         }
     }
 
-s_ClockRangeLimits[2].MaxKHz = 280000;
+s_ClockRangeLimits[2].MaxKHz = avp_freq;
 s_ClockRangeLimits[7].MaxKHz = 350000;
 s_ClockRangeLimits[8].MaxKHz = 350000;
 s_ClockRangeLimits[10].MaxKHz = 350000;

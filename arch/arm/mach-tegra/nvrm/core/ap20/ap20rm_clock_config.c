@@ -42,6 +42,8 @@
 #include "ap15/ap15rm_private.h"
 #include "nvodm_query.h"
 
+#include <linux/vorkKernel.h>
+
 // Enable CPU/EMC ratio policy
 #define NVRM_LIMIT_CPU_EMC_RATIO (1)
 
@@ -1214,10 +1216,10 @@ Ap20SystemClockSourceFind(
     {
         C1KHz = M1KHz = DomainKHz;
         c = NvRmPrivFindFreqMinAbove(NvRmClockDivider_Fractional_2,
-                700000,
+                emc_freq,
 		MaxKHz, &C1KHz);
         m = NvRmPrivFindFreqMinAbove(NvRmClockDivider_Fractional_2,
-                700000,
+                emc_freq,
 		MaxKHz, &M1KHz);
 
         SourceKHz = NV_MAX(NV_MAX(C1KHz, M1KHz), P2KHz);
