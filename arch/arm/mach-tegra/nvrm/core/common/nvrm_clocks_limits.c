@@ -45,11 +45,42 @@
 #ifdef USE_FAKE_SHMOO
 #include <linux/kernel.h>
 
+
 NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 
-#define MAX_OVERCLOCK (1408000)
-
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
+
+#ifdef larger_epeen
+#define MAX_OVERCLOCK (1504000)
+
+NvU32 FakeShmooVoltages[] = {
+    700,
+    800,
+    850,
+    900,
+    950,
+    1100,
+    1250,
+    1300,
+};
+
+NvRmScaledClkLimits FakepScaledCpuLimits = {
+    101, // FakepScaledCpuLimits.HwDeviceId
+    0, // FakepScaledCpuLimits.SubClockId
+    32, // FakepScaledCpuLimits.MinKHz
+    // Clock table
+    {
+	216000,
+    	389000,
+	503000,
+    	760000,
+    	1015000,
+	1216000,
+	1408000,
+	1504000,
+    }
+else
+#define MAX_OVERCLOCK (1408000)
 
 NvU32 FakeShmooVoltages[] = {
     700,
@@ -78,7 +109,7 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
 	1408000,
     }
 };
-
+#endif // larger_epeen
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \

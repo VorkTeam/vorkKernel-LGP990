@@ -4,6 +4,7 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
+//#define larger_epeen
 #define DISABLE_FAKE_SHMOO_UV
 
 /* mm stuff */
@@ -38,7 +39,11 @@
  * avp_freq * 2.5 = ddr_freq
  * ddr_oc * 2 = emc_freq
  */
+#ifdef larger_epeen
+#define avp_freq 240000
+#else
 #define avp_freq 264000
+#endif
 #define ddr_freq (avp_freq * 2.5) / 2
 #define emc_freq (avp_freq * 2.5)
 #define emc_voltage 1200
