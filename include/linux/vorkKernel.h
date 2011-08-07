@@ -4,7 +4,7 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
-//#define larger_epeen
+//define larger_epeen
 #define DISABLE_FAKE_SHMOO_UV
 
 /* mm stuff */
