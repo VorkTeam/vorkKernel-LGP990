@@ -4,7 +4,7 @@
 #include <linux/kthread.h>
 #include <linux/device.h>
 #include <linux/kernel.h>
-//#include <linux/tegra_devices.h>	//20100716  blocking for compile error [LGE]
+//#include <linux/tegra_devices.h>	//20100716 bergkamp.cho@lge.com blocking for compile error [LGE]
 
 #include <nvodm_services.h>
 
@@ -208,21 +208,38 @@ void star_headsetdet_bias(int bias)
     ReadWolfsonRegister(g_wm8994, 0x0001, &r_data);
     if(bias == 0)
     {
-        if(r_data & 0x0020){
-            r_data = r_data & (~0x0020);
-            printk("star_headsetdet_bias headset disabled %4x\n",r_data);
-        }
+        r_data = r_data & (~0x0020);
+		printk("star_headsetdet_bias headset disabled %4x\n",r_data);
     }
-    else
-    {
-        if( (r_data & 0x0020) == 0){
-            r_data = r_data | (0x0023);
-            WriteWolfsonRegister(g_wm8994, 0x0001, r_data);
-            printk("star_headsetdet_bias headset enabled %4x\n",r_data);
-        }
-    }
-    return;
+	else
+	{
+        r_data = r_data | (0x0020);
+		printk("star_headsetdet_bias headset enabled %4x\n",r_data);
+	}
+	WriteWolfsonRegister(g_wm8994, 0x0001, r_data);
+	return;
 }
+//heejeong.seo@lge.com 20110726 mic_bias [start]
+
+void star_Mic_bias(int bias)
+{
+    NvU32 r_data = 0;
+    ReadWolfsonRegister(g_wm8994, 0x0001, &r_data);
+    if(bias == 0)
+    {
+        r_data = r_data & (~0x0003);
+		printk("star_headsetdet_bias headset disabled %4x\n",r_data);
+    }
+	else
+	{
+        r_data = r_data | (0x0003);
+		printk("star_headsetdet_bias headset enabled %4x\n",r_data);
+	}
+	WriteWolfsonRegister(g_wm8994, 0x0001, r_data);
+	return;
+}
+//heejeong.seo@lge.com 20110726 mic_bias [end]
+
 
 /**
  * All the device spefic initializations happen here. 

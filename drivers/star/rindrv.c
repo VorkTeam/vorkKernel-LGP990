@@ -566,10 +566,11 @@ static void rin_receive_buf(struct tty_struct *tty, const unsigned char *cp,
 	if (!sl || sl->magic != RIN_MAGIC || !netif_running(sl->dev))
 		return;
 
-	sl->rx_bytes += count;
+// 2011.2.2 [ril] improve the performance of TCP Throughput [start]
 	skb = dev_alloc_skb(count);
 	if (skb == NULL) {
 		printk(KERN_WARNING "%s: memory squeeze, dropping packet.\n", sl->dev->name);
+        sl->rx_bytes += count;
 		sl->rx_dropped++;
 		return;
 	}
@@ -578,9 +579,13 @@ static void rin_receive_buf(struct tty_struct *tty, const unsigned char *cp,
 	skb_reset_mac_header(skb);
 	skb->protocol = htons(ETH_P_IP);
 
+    spin_lock_bh(&sl->lock);
+	sl->rx_bytes += count;
 	netif_rx(skb);
 	sl->rx_packets++;
+    spin_unlock_bh(&sl->lock);
 
+// 2011.2.2 [ril] improve the performance of TCP Throughput [end]
 #ifdef RIN_DEINSALA_DEBUG
     printk(KERN_INFO "%s: rin_receive_buf: netif_rx(skb) received packet of %d bytes from TTY\n", sl->dev->name, count);
     printk(KERN_INFO "%s: rin_receive_buf: tty_chars_in_buffer(sl->tty): %d\n", sl->dev->name, tty_chars_in_buffer(sl->tty));
