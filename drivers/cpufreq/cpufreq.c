@@ -415,6 +415,10 @@ static int cpufreq_parse_governor(char *str_governor, unsigned int *policy,
 						CPUFREQ_NAME_LEN)) {
 			*policy = CPUFREQ_POLICY_POWERSAVE;
 			err = 0;
+		} else if (!strnicmp(str_governor, "null",
+						CPUFREQ_NAME_LEN)) {
+			*policy = CPUFREQ_POLICY_NULL;
+			err = 0;
 		}
 	} else if (cpufreq_driver->target) {
 		struct cpufreq_governor *t;
@@ -527,6 +531,8 @@ static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 		return sprintf(buf, "powersave\n");
 	else if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
 		return sprintf(buf, "performance\n");
+	else if (policy->policy == CPUFREQ_POLICY_NULL)
+		return sprintf(buf, "null\n");
 	else if (policy->governor)
 		return scnprintf(buf, CPUFREQ_NAME_LEN, "%s\n",
 				policy->governor->name);
@@ -587,7 +593,7 @@ static ssize_t show_scaling_available_governors(struct cpufreq_policy *policy,
 	struct cpufreq_governor *t;
 
 	if (!cpufreq_driver->target) {
-		i += sprintf(buf, "performance powersave");
+		i += sprintf(buf, "null performance powersave");
 		goto out;
 	}
 
