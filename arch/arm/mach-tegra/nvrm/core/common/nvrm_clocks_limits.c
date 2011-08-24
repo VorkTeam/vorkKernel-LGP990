@@ -163,6 +163,10 @@ static NvRmSocShmoo s_SocShmoo;
 static NvRmCpuShmoo s_CpuShmoo;
 static void* s_pShmooData = NULL;
 
+#if defined(CONFIG_TEGRA_CPU_FREQ_VC_ATTRS)
+NvRmCpuShmoo *ExposedCpuShmoo = &s_CpuShmoo;
+#endif
+
 static NvError
 NvRmBootArgChipShmooGet(
     NvRmDeviceHandle hRmDevice,
