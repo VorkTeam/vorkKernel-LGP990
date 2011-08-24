@@ -50,7 +50,7 @@ NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
-#ifdef larger_epeen
+#if 0
 #define MAX_OVERCLOCK (1504000)
 
 NvU32 FakeShmooVoltages[] = {
@@ -80,7 +80,7 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
 	1504000,
     }
 #else
-#define MAX_OVERCLOCK (1408000)
+#define MAX_OVERCLOCK (1100000)
 
 NvU32 FakeShmooVoltages[] = {
     700,
@@ -100,13 +100,13 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     // Clock table
     {
 	216000,
-    	389000,
-    	503000,
-    	760000,
-    	1015000,
+    	312000,
+    	456000,
+    	608000,
+    	816000,
+	912000,
+	1000000,
 	1100000,
-	1216000,
-	1408000,
     }
 };
 #endif // larger_epeen
