@@ -39,6 +39,7 @@
 // 20100728  related deepsleep wakeup delay, (NVIDIA john moser) [END]
 #include <linux/reboot.h>
 #include <linux/delay.h>
+#include <linux/vorkKernel.h>
 
 #include <asm/system.h>
 #include <asm/smp_twd.h>
@@ -123,17 +124,16 @@ static struct cpufreq_frequency_table freq_table[] = {
 	{ 1, 312000 },
 	{ 2, 456000 },
 	{ 3, 608000 },
-	{ 4, 760000 },
-	{ 5, 816000 },
-	{ 6, 912000 },
-	{ 7, 1000000 },
+	{ 4, 816000 },
+	{ 5, 912000 },
+	{ 6, 1000000 },
 
-#if !defined(CONFIG_USE_FAKE_SHMOO)
+#if !defined(larger_epeen)
+	{ 7, 1100000 },
 	{ 8, CPUFREQ_TABLE_END },
 #else
-	{ 8, 1200000 },
-	{ 9, 1400000 },
-	{ 10, CPUFREQ_TABLE_END },
+	{ 7, 1200000 },
+	{ 8, CPUFREQ_TABLE_END },
 #endif
 
 };

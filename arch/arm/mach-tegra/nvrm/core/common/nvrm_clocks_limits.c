@@ -1007,7 +1007,7 @@ static NvError NvRmBootArgChipShmooGet(
         size /= sizeof(*s_CpuShmoo.ShmooVoltages);
         NV_ASSERT((size * sizeof(*s_CpuShmoo.ShmooVoltages) ==
               BootArgSh.CpuShmooVoltagesListSize) && (size > 1));
-        s_CpuShmoo.ShmooVmaxIndex = size - 1;
+        s_CpuShmoo.ShmooVmaxIndex = ClockTableLength - 1;
 
         offset = BootArgSh.CpuScaledLimitsOffset;
         size = BootArgSh.CpuScaledLimitsSize;
