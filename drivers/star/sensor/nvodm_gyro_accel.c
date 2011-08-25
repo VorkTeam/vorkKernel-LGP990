@@ -142,6 +142,7 @@ void NvGyroAccelSetPowerRail(NvOdmServicesPmuHandle hPMUDevice, NvU32 Id, NvBool
 {
 	NvOdmServicesPmuVddRailCapabilities vddrailcap;
 	NvU32 settletime;
+	printk(" ## MPU3050 : 3 \n") ;
 
 	Accel_PRail = Id;
 
@@ -156,7 +157,9 @@ void NvGyroAccelSetPowerRail(NvOdmServicesPmuHandle hPMUDevice, NvU32 Id, NvBool
 		if (settletime)
 			NvOdmOsWaitUS(settletime);  // wait to settle power
 	}
+	NvOdmServicesPmuClose(hPMUDevice);
 }
+
 
 /*
  * Get interrupt type and source.
@@ -305,13 +308,8 @@ void NvGyroAccelI2CClose(NvOdmServicesI2cHandle hI2CDevice)
 NvBool NvGyroAccelI2CSetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* value, NvU32 len)
 {
 	int i;  
-	NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
+        NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
 	NvOdmI2cTransactionInfo TransactionInfo;
-
-// LGE_CHANGE_S [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
-	if (reboot == 1)
-		return NV_FALSE;
-// LGE_CHANGE_E [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 
 	if ((NULL == hDevice) || (NULL == value) || (len > I2C_GYROACCEL_PACKET_SIZE-1)) {
 		return NV_FALSE;
@@ -337,10 +335,10 @@ NvBool NvGyroAccelI2CSetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
 	if (i2c_status != NvOdmI2cStatus_Success) {
 	    printk(" ## MPU3050 _ Give up!! NvGyroAccelI2CSetRegs failed: register %d \n", offset);
 
-		//reboot sensors
-		reboot = 1;
+           //reboot sensors
+           reboot = 1;
 		
-		return NV_FALSE;
+            return NV_FALSE;
 	}
 
 	return NV_TRUE;
@@ -358,11 +356,6 @@ NvBool NvGyroAccelI2CGetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
         int i;
         NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
 	NvOdmI2cTransactionInfo TransactionInfo[2];
-
-// LGE_CHANGE_S [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
-	if (reboot == 1)
-		return NV_FALSE;
-// LGE_CHANGE_E [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 
 	if ((NULL == hDevice) || (NULL == value) || (len > I2C_GYROACCEL_PACKET_SIZE-1)) {
 		printk("NvOdmI2c Get Regs Failed, max size is %d bytes\n", I2C_GYROACCEL_PACKET_SIZE-1);
@@ -394,10 +387,10 @@ NvBool NvGyroAccelI2CGetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
 	if (i2c_status != NvOdmI2cStatus_Success) {
 	    printk(" ## MPU3050 _ Give up!! NvGyroAccelI2CSetRegs failed: register %d \n", offset);
 
-		//reboot sensors
-		reboot = 1;
+           //reboot sensors
+           reboot = 1;
 		
-		return NV_FALSE;
+            return NV_FALSE;
 	}
 
         NvOdmOsMemcpy(value, &s_ReadBuffer[0], len);
@@ -415,7 +408,7 @@ NvOdmGyroAccelOpen(NvOdmGyroAccelHandle* hDevice)
 	const NvOdmPeripheralConnectivity *pConnectivity;
 	NvOdmGyroAccelHandle  hGyro;
 	NvU32    reg_val = 0 ;
-#if DEBUG_LOG
+#if 1
 	printk(" ## MPU3050 : [NvOdmGyroOpen:%d] \n",__LINE__) ;
 #endif
 
@@ -452,7 +445,7 @@ NvOdmGyroAccelOpen(NvOdmGyroAccelHandle* hDevice)
 				hGyro->nDevAddr = (pConnectivity->AddressList[i].Address << 1);
 				foundI2cModule = NV_TRUE;
 				foundGpio = NV_TRUE; //test
-#if DEBUG_LOG
+#if 1
 				printk("## MPU3050 I2CChannelId = %x. ## \n", hGyro->I2CChannelId);
 				printk("## MPU3050 i2c address = %x. ## \n", hGyro->nDevAddr);
 #endif
@@ -469,7 +462,7 @@ printk("## MPU3050 GPIOPinINT = %x. ## \n", hGyro->GPIOPinINT);
 break;*/
 			case NvOdmIoModule_Vdd:
 				hGyro->VddId = pConnectivity->AddressList[i].Address;
-#if DEBUG_LOG
+#if 1
 				printk("## MPU3050 NvOdmIoModule_VddId = %x. ## \n", hGyro->VddId);
 #endif
 				// Power on accelerometer according to Vddid
@@ -490,8 +483,10 @@ break;*/
 		printk("GyroAccel : NvGyroAccelI2COpen Error \n");
 		goto error;
 	};
+	printk(" ##1## GyroAccel : NvGyroAccelI2COpen check1 \n");
 	hGyro->RegsRead = NvGyroAccelI2CGetRegs;
 	hGyro->RegsWrite = NvGyroAccelI2CSetRegs;
+	printk(" ##2## GyroAccel : NvGyroAccelI2COpen check2 \n");
 	/*
 		if(NV_FALSE == NvGyroAccelConnectSemaphore(hGyro))
 		{

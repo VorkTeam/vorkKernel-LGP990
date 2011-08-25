@@ -1735,8 +1735,7 @@ static struct platform_device *nvodm_devices[] __initdata = {
 
 //20100419  for headset detection [LGE_START]
 #if defined(CONFIG_MACH_STAR)
-   // &star_headset_device,			//for not boot
-   &star_wm8994_pdevice,			//heejeong.seo@lge.com 20110621
+    &star_headset_device,			//for not boot
 #endif /* CONFIG_MACH_STAR */
 //20100419  for headset detection [LGE_END]
 
@@ -1746,8 +1745,7 @@ static struct platform_device *nvodm_devices[] __initdata = {
 
 //20100704  jongik's wm8994 driver porting [LGE_START]
 #if defined(CONFIG_MACH_STAR)
-   // &star_wm8994_pdevice,		//for not boot
-   &star_headset_device,			//heejeong.seo@lge.com 20110621
+    &star_wm8994_pdevice,		//for not boot
 #endif /* CONFIG_MACH_STAR */
 //20100704  jongik's wm8994 driver porting [LGE_END]
 #if defined(CONFIG_ANDROID_RAM_CONSOLE)

@@ -5,7 +5,7 @@
  * Copyright (C) 2010 LGE, Inc.
  *
  *
- * Author: Kyungsik Lee <kyungsik.lee@lge.com>
+ * Author: Kyungsik Lee <>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@
 #include "nvodm_services.h"
 #include "nvodm_query_discovery.h"
 #endif /* CONFIG_MACH_STAR */
+
 
 
 #if defined(CONFIG_DEBUG_FS)
@@ -158,6 +159,7 @@ struct cpwatcher_dev {
 static struct cpwatcher_dev *cpwatcher;
 
 
+
 #if defined (CONFIG_STAR_HIDDEN_RESET)
 extern void machine_restart(char *cmd);
 #endif
@@ -256,6 +258,7 @@ static int cpwatcher_thread(void *pd)
 		DBG("[CPW] CP status: %s\n", status? "error" : "available");
 
 		if (status) {//If High, CP error
+
 			input_report_key(cpwatcher->input, EVENT_KEY, 1);
 			input_report_key(cpwatcher->input, EVENT_KEY, 0);
 			DBG("[CPW] Report Key: %d\n", EVENT_KEY);
@@ -281,13 +284,7 @@ static void cpwatcher_work_func(struct work_struct *wq)
 		cpwatcher_get_status(&status);
 		DBG("[CPW] %s(), status: %d\n", __FUNCTION__, status);
 
-		if (status) 
-		{//If High, CP error
-
-// LGE_UPDATE_S eungbo.shim@lge.com 20110609 -- For RIL Recovery !! [EBS]
-			printk("###### CP RESET ####### Push the key 202 to Framework \n");
-// LGE_UPDATE_E eungbo.shim@lge.com 20110609 -- For RIL Recovery !! [EBS]
-
+		if (status) {//If High, CP error
 			input_report_key(dev->input, EVENT_KEY, 1);
 			input_report_key(dev->input, EVENT_KEY, 0);
 			input_sync(dev->input);
@@ -358,12 +355,12 @@ int cpwatcher_open (struct inode *inode, struct file *filp)
 	 printk("%s\n", __FUNCTION__);
 
      return 0;  
-}    
+}
 
 int cpwatcher_release (struct inode *inode, struct file *filp)  
 {
 	printk("%s\n", __FUNCTION__);
-	
+
     return 0;  
 }  
 
@@ -378,29 +375,29 @@ int cpwatcher_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, u
 	usrbuf = (void __user *) arg;
 
 	switch( cmd )      
-	{
+        {
 	  case CPWATCHER_READ:            
-	  {                
+	{
 	  	printk("CPWATCHER_READ\n");
 		read_screen_shot_reserved_buffer(usrbuf, 800*480*3);
 		break;              
-	  }
+	}
 	  case CPWATCHER_WRITE:            
-	  {                
+	{
 		  printk("CPWATCHER_WRITE\n"); 	
 		  write_screen_shot_reserved_buffer(usrbuf, 800*480*3);
 		  break;            
-	  }	  
+	}
 	  case CPWATCHER_REBOOT:            
-	  {                
+	{
 		  printk("CPWATCHER_REBOOT\n"); 	
 		  machine_restart("hidden");
 		  break;            
-	  }	  
-	}	     
-	return 0;  
+	}
+	}
+	return 0;
 }
- 
+
 struct file_operations cpwatcher_fops =  {
 	 .owner    = THIS_MODULE,      
 	 .ioctl    = cpwatcher_ioctl,      
@@ -414,7 +411,7 @@ static struct miscdevice cpwatcher_miscdev = {
 	.fops       = &cpwatcher_fops,
 };
 #endif
-	
+
 
 
 static int cpwatcher_probe(struct platform_device *pdev)
@@ -425,7 +422,6 @@ static int cpwatcher_probe(struct platform_device *pdev)
 	NvBool ret_status = 0;
 	int ret = 0;
     const NvOdmPeripheralConnectivity *pConnectivity = NULL;
-
 
 	dev = kzalloc(sizeof(struct cpwatcher_dev), GFP_KERNEL);
 	if (!dev) {
@@ -510,20 +506,9 @@ static int cpwatcher_probe(struct platform_device *pdev)
 
     NvOdmGpioConfig(dev->hGpio, dev->hCP_status, NvOdmGpioPinMode_InputData);
 
-// LGE_UPDATE_S eungbo.shim@lge.com 20110609 -- For RIL Recovery !! [EBS]
-#if defined(EBS) 
     ret_status = NvOdmGpioInterruptRegister(dev->hGpio, &dev->hGpioInterrupt,
         dev->hCP_status, NvOdmGpioPinMode_InputInterruptAny,
 			cpwatcher_irq_handler, (void *) dev, 0);
-
-#else
-	ret_status = NvOdmGpioInterruptRegister(dev->hGpio, &dev->hGpioInterrupt,
-        dev->hCP_status, NvOdmGpioPinMode_InputInterruptRisingEdge,
-			cpwatcher_irq_handler, (void *) dev, 0);
-
-#endif 
-// LGE_UPDATE_E eungbo.shim@lge.com 20110609 -- For RIL Recovery !! [EBS]
-
     if (ret_status == NV_FALSE) {
 
         printk("[CPW] %s: Error\n", __FUNCTION__);
