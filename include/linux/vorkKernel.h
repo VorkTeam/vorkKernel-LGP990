@@ -4,8 +4,7 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
-//define larger_epeen
-#define DISABLE_FAKE_SHMOO_UV
+//define avp_oc
 
 /* mm stuff */
 #define dirty_background_ratio_default 2
@@ -39,14 +38,15 @@
  * avp_freq * 2.5 = ddr_freq
  * ddr_oc * 2 = emc_freq
  */
-#ifdef larger_epeen
-#define avp_freq 240000
+#ifdef avp_oc
+#define avp_freq 280000
+#define emc_voltage 1250
 #else
-#define avp_freq 264000
+#define avp_freq 240000
+#define emc_voltage 1200
 #endif
 #define ddr_freq (avp_freq * 2.5) / 2
 #define emc_freq (avp_freq * 2.5)
-#define emc_voltage 1200
 
 #define gpu_divider 6
 
