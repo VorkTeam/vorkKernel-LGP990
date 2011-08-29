@@ -127,15 +127,8 @@ static struct cpufreq_frequency_table freq_table[] = {
 	{ 4, 816000 },
 	{ 5, 912000 },
 	{ 6, 1000000 },
-
-#if !defined(larger_epeen)
 	{ 7, 1100000 },
 	{ 8, CPUFREQ_TABLE_END },
-#else
-	{ 7, 1200000 },
-	{ 8, CPUFREQ_TABLE_END },
-#endif
-
 };
 
 #define FT_SIZE ARRAY_SIZE(freq_table)
