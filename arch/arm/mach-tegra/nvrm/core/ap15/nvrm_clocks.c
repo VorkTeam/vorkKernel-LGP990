@@ -1086,10 +1086,10 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
             s_ClockSourceFreq[NvRmClockSource_PllP2] =  48000;
             s_ClockSourceFreq[NvRmClockSource_PllP3] =  72000;
             s_ClockSourceFreq[NvRmClockSource_PllP4] = 108000;
-            s_ClockSourceFreq[NvRmClockSource_PllC0] = emc_freq;
-            s_ClockSourceFreq[NvRmClockSource_PllM0] = emc_freq;
+            s_ClockSourceFreq[NvRmClockSource_PllC0] = VORK_AVP_FREQ;
+            s_ClockSourceFreq[NvRmClockSource_PllM0] = VORK_EMC2_FREQ;
             s_ClockSourceFreq[NvRmClockSource_PllX0] = 1100000;
-            s_ClockSourceFreq[NvRmClockSource_SystemBus] = avp_freq;
+            s_ClockSourceFreq[NvRmClockSource_SystemBus] = VORK_AVP_FREQ;
             //NvRmPrivAp15SimPllInit(hRmDevice); // Enable plls in simulation
             NvRmPrivBusClockInit(
                 hRmDevice, s_ClockSourceFreq[NvRmClockSource_SystemBus]);

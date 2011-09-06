@@ -242,7 +242,7 @@ extern "C"
  * If thresholds are set to 0, the values are derived at run time from the
  * characterization data
  */
-#define NVRM_CPU1_ON_MIN_KHZ (216000)
+#define NVRM_CPU1_ON_MIN_KHZ (816000)
 #define NVRM_CPU1_OFF_MAX_KHZ (608000)
 
 #define NVRM_CPU1_ON_PENDING_MS (1500)
@@ -267,9 +267,9 @@ extern "C"
  * ODM should also set a critical threshold to trigger h/w shutdown
  * mechanism.
  */
-#define NVRM_DTT_DEGREES_HIGH           (90L)
-#define NVRM_DTT_DEGREES_LOW            (60L)
-#define NVRM_DTT_DEGREES_HYSTERESIS     (5L)
+#define NVRM_DTT_DEGREES_HIGH           (95L)
+#define NVRM_DTT_DEGREES_LOW            (65L)
+#define NVRM_DTT_DEGREES_HYSTERESIS     (8L)
 
 #define NVRM_DTT_VOLTAGE_THROTTLE_MV    (NvRmVoltsMaximum)
 #define NVRM_DTT_CPU_DELTA_KHZ          (100000UL)
@@ -281,7 +281,7 @@ extern "C"
 
 /// Default low corners for core and dedicated CPU voltages
 #define NVRM_AP20_LOW_CORE_MV (750)
-#define NVRM_AP20_LOW_CPU_MV (675)
+#define NVRM_AP20_LOW_CPU_MV (750)
 /// Core voltage in suspend
 #define NVRM_AP20_SUSPEND_CORE_MV (850)
 

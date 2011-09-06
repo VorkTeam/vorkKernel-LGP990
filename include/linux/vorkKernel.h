@@ -38,17 +38,22 @@
  * avp_freq * 2.5 = ddr_freq
  * ddr_oc * 2 = emc_freq
  */
-#ifdef avp_oc
-#define avp_freq 280000
-#define emc_voltage 1250
-#else
-#define avp_freq 240000
-#define emc_voltage 1200
-#endif
-#define ddr_freq (avp_freq * 2.5) / 2
-#define emc_freq (avp_freq * 2.5)
 
-#define gpu_divider 6
+#ifdef avp_oc
+#define VORK_AVP_FREQ 280000
+#define VORK_EMC_VOLT 1250
+#else
+#define VORK_AVP_FREQ 240000
+#define VORK_EMC_VOLT 1200
+#endif
+
+#define VORK_EMC2_FREQ ( VORK_AVP_FREQ * 5 / 2 )
+#define VORK_DDR_FREQ ( VORK_EMC2_FREQ / 2 )
+
+
+/* Gpu Related stuff */
+#define VORK_GPU_DIVIDER 7
+#define VORK_GPU_FREQ 333500
 
 #endif /* __KERNEL__ */
 
