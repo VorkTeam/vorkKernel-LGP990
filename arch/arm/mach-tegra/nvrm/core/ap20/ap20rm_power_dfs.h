@@ -242,8 +242,14 @@ extern "C"
  * If thresholds are set to 0, the values are derived at run time from the
  * characterization data
  */
+
+#ifdef larger_epeen
+#define NVRM_CPU1_ON_MIN_KHZ (608000)
+#define NVRM_CPU1_OFF_MAX_KHZ (456000)
+#else
 #define NVRM_CPU1_ON_MIN_KHZ (816000)
 #define NVRM_CPU1_OFF_MAX_KHZ (608000)
+#endif
 
 #define NVRM_CPU1_ON_PENDING_MS (1500)
 #define NVRM_CPU1_OFF_PENDING_MS (1000)

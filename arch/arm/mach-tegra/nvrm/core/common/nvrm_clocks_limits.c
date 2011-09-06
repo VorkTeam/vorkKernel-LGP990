@@ -50,17 +50,18 @@ NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
-#define MAX_OVERCLOCK (1600000)
+#ifdef larger_epeen
+#define MAX_OVERCLOCK (1552000)
 
 NvU32 FakeShmooVoltages[] = {
     750,
+    800,
     850,
     950,
     1050,
     1150,
     1250,
     1350,
-    1450,
 };
 
 NvRmScaledClkLimits FakepScaledCpuLimits = {
@@ -70,15 +71,45 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     // Clock table
     {
 	216000,
+    	456000,
+	608000,
+    	816000,
+    	1000000,
+	1216000,
+	1408000,
+	1552000,
+    }
+#else
+#define MAX_OVERCLOCK (1216000)
+
+NvU32 FakeShmooVoltages[] = {
+    750,
+    775,
+    800,
+    850,
+    900,
+    975,
+    1025,
+    1125,
+};
+
+NvRmScaledClkLimits FakepScaledCpuLimits = {
+    101, // FakepScaledCpuLimits.HwDeviceId
+    0, // FakepScaledCpuLimits.SubClockId
+    32, // FakepScaledCpuLimits.MinKHz
+    // Clock table
+    {
+	216000,
+    	312000,
+    	456000,
     	608000,
     	816000,
-    	912000,
-    	1000000,
-	1200000,
-	1400000,
-	1600000,
+	912000,
+	1000000,
+	1216000,
     }
 };
+#endif // larger_epeen
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \
@@ -131,10 +162,6 @@ static NvRmChipFlavor s_ChipFlavor;
 static NvRmSocShmoo s_SocShmoo;
 static NvRmCpuShmoo s_CpuShmoo;
 static void* s_pShmooData = NULL;
-
-#if defined(CONFIG_TEGRA_CPU_FREQ_VC_ATTRS)
-NvRmCpuShmoo *ExposedCpuShmoo = &s_CpuShmoo;
-#endif
 
 static NvError
 NvRmBootArgChipShmooGet(
@@ -971,7 +998,7 @@ static NvError NvRmBootArgChipShmooGet(
         size /= sizeof(*s_CpuShmoo.ShmooVoltages);
         NV_ASSERT((size * sizeof(*s_CpuShmoo.ShmooVoltages) ==
               BootArgSh.CpuShmooVoltagesListSize) && (size > 1));
-        s_CpuShmoo.ShmooVmaxIndex = ClockTableLength - 1;
+        s_CpuShmoo.ShmooVmaxIndex = size - 1;
 
         offset = BootArgSh.CpuScaledLimitsOffset;
         size = BootArgSh.CpuScaledLimitsSize;

@@ -4,7 +4,8 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
-//define avp_oc
+#define DISABLE_FAKE_SHMOO_UV
+//define larger_epeen
 
 /* mm stuff */
 #define dirty_background_ratio_default 2
@@ -39,7 +40,7 @@
  * ddr_oc * 2 = emc_freq
  */
 
-#ifdef avp_oc
+#ifdef larger_epeen
 #define VORK_AVP_FREQ 280000
 #define VORK_EMC_VOLT 1250
 #else
@@ -53,7 +54,12 @@
 
 /* Gpu Related stuff */
 #define VORK_GPU_DIVIDER 7
+
+#ifdef larger_epeen
+#define VORK_GPU_FREQ 366666
+#else
 #define VORK_GPU_FREQ 333500
+#endif
 
 #endif /* __KERNEL__ */
 

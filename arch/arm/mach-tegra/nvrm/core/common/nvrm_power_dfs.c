@@ -836,7 +836,11 @@ static void DfsParametersInit(NvRmDfs* pDfs)
         pDfs->HighCornerKHz.Domains[i] = pDfs->DfsParameters[i].MaxKHz;
     }
 #ifdef USE_FAKE_SHMOO
-	pDfs->HighCornerKHz.Domains[NvRmDfsClockId_Cpu] = 912000;
+#ifdef larger_epeen
+	pDfs->HighCornerKHz.Domains[NvRmDfsClockId_Cpu] = 1000000;
+#else
+	pDfs->HighCornerKHz.Domains[NvRmDfsClockId_Cpu] = 816000;
+#endif
 #endif
     pDfs->CpuCornersShadow.MinKHz =
         pDfs->LowCornerKHz.Domains[NvRmDfsClockId_Cpu];
