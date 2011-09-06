@@ -1216,10 +1216,10 @@ Ap20SystemClockSourceFind(
     {
         C1KHz = M1KHz = DomainKHz;
         c = NvRmPrivFindFreqMinAbove(NvRmClockDivider_Fractional_2,
-                emc_freq,
+                VORK_EMC2_FREQ,
 		MaxKHz, &C1KHz);
         m = NvRmPrivFindFreqMinAbove(NvRmClockDivider_Fractional_2,
-                emc_freq,
+                VORK_EMC2_FREQ,
 		MaxKHz, &M1KHz);
 
         SourceKHz = NV_MAX(NV_MAX(C1KHz, M1KHz), P2KHz);

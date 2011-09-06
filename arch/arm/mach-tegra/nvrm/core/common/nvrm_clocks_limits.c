@@ -79,7 +79,6 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
 	1600000,
     }
 };
-#endif // larger_epeen
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \
@@ -243,8 +242,6 @@ s_ClockRangeLimits[10].MaxKHz = VORK_DDR_FREQ;
             pCpuLimits->MaxKHzList[s_ChipFlavor.pCpuShmoo->ShmooVmaxIndex];
         s_pClockScales[NvRmModuleID_Cpu] = pCpuLimits->MaxKHzList;
     }
-
-NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockRangeLimits[NvRmModuleID_CPU].MaxKHz );
 
     // Set AVP upper clock boundary with combined Absolute/Scaled limit;
     // Sync System clock with AVP (System is not in relocation table)
