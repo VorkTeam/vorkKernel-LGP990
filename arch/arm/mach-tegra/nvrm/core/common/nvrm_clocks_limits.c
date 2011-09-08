@@ -79,6 +79,7 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
 	1408000,
 	1552000,
     }
+};
 #else
 #define MAX_OVERCLOCK (1216000)
 
