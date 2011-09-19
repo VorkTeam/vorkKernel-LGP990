@@ -11,6 +11,7 @@
 #define dirty_background_ratio_default 20
 #define vm_dirty_ratio_default 50
 #define inactive_file_ratio_default 20
+#define vfs_cache_pressure 25
 
 /* cfs stuff */
 #ifdef 0

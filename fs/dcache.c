@@ -34,8 +34,9 @@
 #include <linux/fs_struct.h>
 #include <linux/hardirq.h>
 #include "internal.h"
+#include <linux/vorkKernel.h>
 
-int sysctl_vfs_cache_pressure __read_mostly = 200;
+int sysctl_vfs_cache_pressure __read_mostly = vfs_cache_pressure;
 EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
 
  __cacheline_aligned_in_smp DEFINE_SPINLOCK(dcache_lock);
