@@ -21,7 +21,7 @@
  *	v7_op_dcache_all op
  *
  *	op=c14, Flush the whole D-cache.
- *	op=c10 Clean the whould D-cache.
+ *	op=c10, Clean the whole D-cache.
  *
  *	Corrupted registers: r0-r7, r9-r11 (r6 only in Thumb mode)
  *
@@ -59,7 +59,7 @@
  ARM(	orr	r11, r11, r7, lsl r2	)	@ factor index number into r11
  THUMB(	lsl	r6, r7, r2		)
  THUMB(	orr	r11, r11, r6		)	@ factor index number into r11
-	mcr	p15, 0, r11, c7, \op, 2		@ op=c10/c14, clean/clean & invalidate by set/way
+	mcr	p15, 0, r11, c7, \op, 2		@ op=c10/c14, clean/flush by set/way
 	subs	r9, r9, #1			@ decrement the way
 	bge	1003b
 	subs	r7, r7, #1			@ decrement the index
@@ -120,6 +120,8 @@ ENTRY(v7_clean_kern_cache_all)
 	mov	r0, #0
 #ifdef CONFIG_SMP
 	mcr	p15, 0, r0, c7, c1, 0		@ invalidate I-cache inner shareable
+#else
+	mcr	p15, 0, r0, c7, c5, 0		@ I+BTB cache invalidate
 #endif
  ARM(	ldmfd	sp!, {r4-r5, r7, r9-r11, lr}	)
  THUMB(	ldmfd	sp!, {r4-r7, r9-r11, lr}	)
