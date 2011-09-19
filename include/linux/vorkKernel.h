@@ -14,16 +14,6 @@
 #define vfs_cache_pressure 25
 
 /* cfs stuff */
-#ifdef 0
-//Testing stuff
-#define sysctl_sched_latency_default 600000ULL
-#define normalized_sysctl_sched_latency_default  600000ULL
-#define sysctl_sched_min_granularity_default 400000ULL
-#define normalized_sysctl_sched_min_granularity_default 400000ULL
-#define sched_nr_latency_default 5
-#define sysctl_sched_wakeup_granularity_default 25000UL
-#define normalized_sysctl_sched_wakeup_granularity_default 25000UL
-#else
 #define sysctl_sched_latency_default 6000000ULL
 #define normalized_sysctl_sched_latency_default  6000000ULL
 #define sysctl_sched_min_granularity_default 750000ULL
@@ -31,7 +21,6 @@
 #define sched_nr_latency_default 8
 #define sysctl_sched_wakeup_granularity_default 1000000UL
 #define normalized_sysctl_sched_wakeup_granularity_default 1000000UL
-#endif
 
 /* Test some stuff */
 #define CFS_BOOST
