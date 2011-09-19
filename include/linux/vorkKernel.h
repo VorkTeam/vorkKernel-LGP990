@@ -5,21 +5,32 @@
 
 #define USE_FAKE_SHMOO
 #define DISABLE_FAKE_SHMOO_UV
-#define larger_epeen
+//define larger_epeen
 
 /* mm stuff */
-#define dirty_background_ratio_default 2
-#define vm_dirty_ratio_default 4
+#define dirty_background_ratio_default 20
+#define vm_dirty_ratio_default 50
 #define inactive_file_ratio_default 20
 
 /* cfs stuff */
-#define sysctl_sched_latency_default 3200000ULL
-#define normalized_sysctl_sched_latency_default  3200000ULL
+#ifdef 0
+//Testing stuff
+#define sysctl_sched_latency_default 600000ULL
+#define normalized_sysctl_sched_latency_default  600000ULL
 #define sysctl_sched_min_granularity_default 400000ULL
 #define normalized_sysctl_sched_min_granularity_default 400000ULL
-#define sched_nr_latency_default 8
+#define sched_nr_latency_default 5
 #define sysctl_sched_wakeup_granularity_default 25000UL
 #define normalized_sysctl_sched_wakeup_granularity_default 25000UL
+#else
+#define sysctl_sched_latency_default 6000000ULL
+#define normalized_sysctl_sched_latency_default  6000000ULL
+#define sysctl_sched_min_granularity_default 750000ULL
+#define normalized_sysctl_sched_min_granularity_default 750000ULL
+#define sched_nr_latency_default 8
+#define sysctl_sched_wakeup_granularity_default 1000000UL
+#define normalized_sysctl_sched_wakeup_granularity_default 1000000UL
+#endif
 
 /* Test some stuff */
 #define CFS_BOOST
@@ -53,7 +64,7 @@
 
 
 /* Gpu Related stuff */
-#define VORK_GPU_DIVIDER 7
+#define VORK_GPU_DIVIDER 8
 
 #ifdef larger_epeen
 #define VORK_GPU_FREQ 366666
