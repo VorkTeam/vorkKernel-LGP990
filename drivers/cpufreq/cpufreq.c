@@ -28,12 +28,11 @@
 #include <linux/cpu.h>
 #include <linux/completion.h>
 #include <linux/mutex.h>
+#include <linux/vorkKernel.h>
 
 #define dprintk(msg...) cpufreq_debug_printk(CPUFREQ_DEBUG_CORE, \
 						"cpufreq-core", msg)
 
-#define USE_FAKE_SHMOO
-#define DISABLE_FAKE_SHMOO_UV
 #ifdef USE_FAKE_SHMOO
 #include "../nvrm/core/common/nvrm_clocks_limits_private.h"
 #include "../nvrm/core/common/nvrm_power_dfs.h"

@@ -40,8 +40,8 @@
 #include "nvrm_memmgr.h"
 #include "ap15/ap15rm_private.h"
 #include "ap15/project_relocation_table.h"
+#include <linux/vorkKernel.h>
 
-#define USE_FAKE_SHMOO
 #ifdef USE_FAKE_SHMOO
 #include <linux/kernel.h>
 

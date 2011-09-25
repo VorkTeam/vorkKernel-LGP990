@@ -50,7 +50,8 @@
 #include <nvrm_power.h>
 #include <nvrm_power_private.h>
 
-#define USE_FAKE_SHMOO
+#include <linux/vorkKernel.h>
+
 #ifdef USE_FAKE_SHMOO
 #define POLICY_COEFF (45)
 

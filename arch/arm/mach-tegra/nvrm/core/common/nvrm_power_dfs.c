@@ -51,8 +51,8 @@
 #include "ap15/ap15rm_clocks.h"
 #include "ap20/ap20rm_power_dfs.h"
 #include "ap20/ap20rm_clocks.h"
+#include <linux/vorkKernel.h>
 
-#define USE_FAKE_SHMOO
 #ifdef USE_FAKE_SHMOO
 #include <linux/kernel.h>
 

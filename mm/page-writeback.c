@@ -34,6 +34,7 @@
 #include <linux/syscalls.h>
 #include <linux/buffer_head.h>
 #include <linux/pagevec.h>
+#include <linux/vorkKernel.h>
 
 /*
  * After a CPU has dirtied this many pages, balance_dirty_pages_ratelimited
@@ -60,7 +61,7 @@ static inline long sync_writeback_pages(unsigned long dirtied)
 /*
  * Start background writeback (via writeback threads) at this percentage
  */
-int dirty_background_ratio = 10;
+int dirty_background_ratio = dirty_background_ratio_default;
 
 /*
  * dirty_background_bytes starts at 0 (disabled) so that it is a function of
@@ -77,7 +78,7 @@ int vm_highmem_is_dirtyable;
 /*
  * The generator of dirty data starts writeback at this percentage
  */
-int vm_dirty_ratio = 20;
+int vm_dirty_ratio = vm_dirty_ratio_default;
 
 /*
  * vm_dirty_bytes starts at 0 (disabled) so that it is a function of
