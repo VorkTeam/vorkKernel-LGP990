@@ -27,6 +27,19 @@
 #define CFS_BOOST_NICE -10
 
 
+// AVP/SYSTEM/GPU/VDE OC related stuff
+
+#define VORK_AVP_FREQ 240000
+#define VORK_VDE_FREQ 240000
+#define VORK_SYSTEM_FREQ 300000
+#define VORK_EMC_VOLT 1200
+
+#define VORK_EMC2_FREQ ( VORK_AVP_FREQ * 5 / 2 )
+#define VORK_DDR_FREQ ( VORK_EMC2_FREQ / 2 )
+
+#define VORK_GPU_DIVIDER 7
+#define VORK_GPU_FREQ 333500
+
 #endif /* __KERNEL__ */
 
 #endif

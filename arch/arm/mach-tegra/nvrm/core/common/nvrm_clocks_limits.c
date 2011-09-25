@@ -184,16 +184,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Combine AVP/System clock absolute limit with scaling V/F ladder upper
     // boundary, and set default clock range for all present modules the same
     // as for AVP/System clock
-    AvpMaxKHz = pSKUedLimits->AvpMaxKHz;
-    for (i = 0; i < pShmoo->ScaledLimitsListSize; i++)
-    {
-        if (pHwLimits[i].HwDeviceId == NV_DEVID_AVP)
-        {
-            AvpMaxKHz = NV_MIN(
-                AvpMaxKHz, pHwLimits[i].MaxKHzList[pShmoo->ShmooVmaxIndex]);
-            break;
-        }
-    }
+	AvpMaxKHz = VORK_AVP_FREQ;
 
     for (i = 0; i < NvRmPrivModuleID_Num; i++)
     {
@@ -231,6 +222,13 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
             s_pClockScales[id] = pHwLimits[i].MaxKHzList;
         }
     }
+
+
+s_ClockRangeLimits[2].MaxKHz = VORK_AVP_FREQ;
+s_ClockRangeLimits[7].MaxKHz = VORK_DDR_FREQ;
+s_ClockRangeLimits[8].MaxKHz = VORK_GPU_FREQ;
+s_ClockRangeLimits[10].MaxKHz = VORK_DDR_FREQ;
+
     // Fill in CPU scaling data if SoC has dedicated CPU rail, and CPU clock
     // characterization data is separated from other modules on common core rail
     if (s_ChipFlavor.pCpuShmoo)
@@ -245,11 +243,12 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
         s_pClockScales[NvRmModuleID_Cpu] = pCpuLimits->MaxKHzList;
     }
 
+NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockRangeLimits[NvRmModuleID_Cpu].MaxKHz );
+
     // Set AVP upper clock boundary with combined Absolute/Scaled limit;
     // Sync System clock with AVP (System is not in relocation table)
-    s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz = AvpMaxKHz;
-    s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz =
-        s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz;
+    s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz = VORK_AVP_FREQ;
+    s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz = VORK_SYSTEM_FREQ;
     s_ClockRangeLimits[NvRmPrivModuleID_System].MinKHz =
         s_ClockRangeLimits[NvRmModuleID_Avp].MinKHz;
     s_pClockScales[NvRmPrivModuleID_System] = s_pClockScales[NvRmModuleID_Avp];
@@ -257,13 +256,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Set VDE upper clock boundary with combined Absolute/Scaled limit (on
     // AP15/Ap16 VDE clock derived from the system bus, and VDE maximum limit
     // must be the same as AVP/System).
-    VdeMaxKHz = pSKUedLimits->VdeMaxKHz;
-    VdeMaxKHz = NV_MIN(
-        VdeMaxKHz, s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
-    if ((hRmDevice->ChipId.Id == 0x15) || (hRmDevice->ChipId.Id == 0x16))
-    {
-        NV_ASSERT(VdeMaxKHz == AvpMaxKHz);
-    }
+    VdeMaxKHz = VORK_VDE_FREQ;
     s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz = VdeMaxKHz;
 
     // Set upper clock boundaries for devices on CPU bus (CPU, Mselect,
@@ -280,7 +273,6 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     {
         s_ClockRangeLimits[NvRmModuleID_CacheMemCtrl].MaxKHz = CpuMaxKHz;
         s_ClockRangeLimits[NvRmPrivModuleID_Mselect].MaxKHz = CpuMaxKHz;
-        NV_ASSERT(s_ClockRangeLimits[NvRmClkLimitsExtID_ClkSrc].MaxKHz >=
                   CpuMaxKHz);
     }
     else if (hRmDevice->ChipId.Id == 0x20)
@@ -296,20 +288,15 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
     // Fill in memory controllers absolute range (scaled data is on ODM level)
     s_ClockRangeLimits[NvRmPrivModuleID_MemoryController].MaxKHz =
         pSKUedLimits->McMaxKHz;
-    s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemoryController].MaxKHz =
-        pSKUedLimits->Emc2xMaxKHz;
+    s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemoryController].MaxKHz = VORK_EMC2_FREQ;
     s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemoryController].MinKHz =
         NVRM_SDRAM_MIN_KHZ * 2;
-    s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemory].MaxKHz =
-        pSKUedLimits->Emc2xMaxKHz / 2;
+    s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemory].MaxKHz = VORK_DDR_FREQ;
     s_ClockRangeLimits[NvRmPrivModuleID_ExternalMemory].MinKHz =
         NVRM_SDRAM_MIN_KHZ;
 
     // Set 3D upper clock boundary with combined Absolute/Scaled limit.
-    TDMaxKHz = pSKUedLimits->TDMaxKHz;
-    TDMaxKHz = NV_MIN(
-        TDMaxKHz, s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
-    s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = TDMaxKHz;
+    s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = VORK_GPU_FREQ;
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
     // (fill in clock limits for both display heads)
