@@ -333,14 +333,14 @@ const NvU8 MIC2826_LDO_Votage_Table[] =
 #endif
 
 #define MAX8907_MIN_OUTPUT_VOLTAGE_SD_A_x10          6375  // 637.5 mV
-#define MAX8907_MIN_OUTPUT_VOLTAGE_SD_B_LDO_B        750   // 750 mV
+#define MAX8907_MIN_OUTPUT_VOLTAGE_SD_B_LDO_B        725   // 750 mV
 #define MAX8907_MIN_OUTPUT_VOLTAGE_LDO_A             650   // 650 mV
 //20100413, , unused
 #ifndef CONFIG_MACH_STAR
-#define FAN5355_MIN_OUTPUT_VOLTAGE_x10                7500  // 750.0 mV
+#define FAN5355_MIN_OUTPUT_VOLTAGE_x10                7250  // 750.0 mV
 #endif
 //20100819, , Voltage bug fix
-#define MAX8952_MIN_OUTPUT_VOLTAGE_x10				7700 // 770.0mV <-- 750.0mV
+#define MAX8952_MIN_OUTPUT_VOLTAGE_x10				7250 // 770.0mV <-- 750.0mV
 
 #define MAX8907_OUTPUT_VOLTAGE_INCREMENT_SD_A_x10     125  // 12.5 mV
 #define MAX8907_OUTPUT_VOLTAGE_INCREMENT_SD_B_LDO_B   50   // 50 mV

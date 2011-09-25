@@ -1301,6 +1301,10 @@ typedef struct NvRmDfsStarvationHintRec
     NvRmDfsVoltageRailId RailId,
     NvRmMilliVolts LowMv );
 
+void
+NvRmDvsForceUpdate(
+   NvRmDeviceHandle hRmDeviceHandle );
+
 /**
  * Notifies RM Kernel about entering Suspend state.
  * 

@@ -50,6 +50,17 @@
 #include <nvrm_power.h>
 #include <nvrm_power_private.h>
 
+#define USE_FAKE_SHMOO
+#ifdef USE_FAKE_SHMOO
+#define POLICY_COEFF (45)
+
+#include "nvrm/core/common/nvrm_clocks_limits_private.h"
+#include "nvrm/core/common/nvrm_power_dfs.h"
+
+extern NvRmCpuShmoo fake_CpuShmoo;  // Stored faked CpuShmoo values
+extern NvRmDfs *fakeShmoo_Dfs;
+#endif
+
 #define KTHREAD_IRQ_PRIO (MAX_RT_PRIO>>1)
 
 static NvRmDeviceHandle rm_cpufreq = NULL;
@@ -91,6 +102,29 @@ static void tegra_cpufreq_hotplug(NvRmPmRequest req)
 	if (rc)
 		pr_err("%s: error %d servicing hot plug request\n",
 		       __func__, rc);
+}
+
+// Hack for pseudo govenors
+
+static int enforce_freq_table_bounds(struct cpufreq_policy *policy)
+{
+	unsigned int max_freq, min_freq;
+	int ret;
+
+	max_freq = policy->max;
+	min_freq = policy->min;
+
+
+#define FT_SIZE fake_CpuShmoo.ShmooVmaxIndex
+
+        cpufreq_verify_within_limits(policy,
+                fake_CpuShmoo.pScaledCpuLimits->MaxKHzList[0], fake_CpuShmoo.pScaledCpuLimits->MaxKHzList[FT_SIZE]);
+
+	ret = 0;
+	if (max_freq != policy->max || min_freq != policy->min)
+		ret = 1;
+
+	return ret;
 }
 
 #ifdef CONFIG_HOTPLUG_CPU
@@ -190,12 +224,39 @@ static unsigned int tegra_get_speed(unsigned int cpu)
 
 static int tegra_set_policy(struct cpufreq_policy *pol)
 {
-	NvError e = NvRmDfsSetCpuEnvelope(rm_cpufreq, pol->min, pol->max);
+	NvError e;
+	unsigned int min, max, margin;
 
+	margin = POLICY_COEFF * (pol->max - pol->min) / 100;
+
+	switch (pol->policy) {
+	case CPUFREQ_POLICY_POWERSAVE:
+		min = pol->min;
+		max = pol->min + margin;
+		break;
+	case CPUFREQ_POLICY_PERFORMANCE:
+		min = pol->max - margin;
+		max = pol->max;
+		break;
+	case CPUFREQ_POLICY_NULL:
+	default:
+		min = pol->min;
+		max = pol->max;
+		break;
+	}
+
+	enforce_freq_table_bounds(pol);
+
+	pr_debug("%s: setting policy: %u, min: %u, max: %u\n",
+					__func__, pol->policy, min, max);
+
+	e = NvRmDfsSetCpuEnvelope(rm_cpufreq, min, max);
 	if (e) {
 		pr_err("%s: error 0x%08x \n", __func__, e);
 		return -EINVAL;
 	}
+	NvRmDvsForceUpdate(rm_cpufreq);
+
 	return 0;
 }
 
