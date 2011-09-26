@@ -50,20 +50,21 @@
  * Improved by Benee
  */
 
-#define MAX_OVERCLOCK (1216000)
+#ifdef larger_epeen
+#define MAX_OVERCLOCK (1560000)
 
 NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
 NvU32 FakeShmooVoltages[] = {
     750,
-    775,
-    800,
     850,
-    900,
-    975,
-    1025,
-    1125,
+    950,
+    1050,
+    1100,
+    1200,
+    1300,
+    1400,
 };
 
 NvRmScaledClkLimits FakepScaledCpuLimits = {
@@ -73,15 +74,46 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     // Clock table
     {
 	216000,
-    	312000,
     	456000,
     	608000,
     	816000,
-    	912000,
+    	1000000,
+    	1216000,
+	1408000,
+	1560000,
+    }
+};
+
+#else
+#define MAX_OVERCLOCK (1216000)
+
+NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
+NvU32 FakeShmooVmaxIndex = 5; // Max voltage index in the voltage tab (size-1)
+
+NvU32 FakeShmooVoltages[] = {
+    750,
+    775,
+    825,
+    875,
+    950,
+    1050,
+};
+
+NvRmScaledClkLimits FakepScaledCpuLimits = {
+    101, // FakepScaledCpuLimits.HwDeviceId
+    0, // FakepScaledCpuLimits.SubClockId
+    32, // FakepScaledCpuLimits.MinKHz
+    // Clock table
+    {
+	216000,
+    	456000,
+    	608000,
+    	816000,
 	1000000,
 	1216000,
     }
 };
+#endif // larger_epeen
 #endif // USE_FAKE_SHMOO
 
 #define NvRmPrivGetStepMV(hRmDevice, step) \
@@ -273,7 +305,6 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
     {
         s_ClockRangeLimits[NvRmModuleID_CacheMemCtrl].MaxKHz = CpuMaxKHz;
         s_ClockRangeLimits[NvRmPrivModuleID_Mselect].MaxKHz = CpuMaxKHz;
-                  CpuMaxKHz);
     }
     else if (hRmDevice->ChipId.Id == 0x20)
     {
