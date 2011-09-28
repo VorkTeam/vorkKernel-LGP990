@@ -543,7 +543,7 @@ extern uint wl_dtim_val;
 static int dhd_set_suspend(int value, dhd_pub_t *dhd)
 {
 #if 0 // 20101005  - bug fix: multicast packet lost/wifi throughput down [START]
-	int power_mode = PM_MAX;
+	int power_mode = PM_FAST;
 	/* wl_pkt_filter_enable_t	enable_parm; */
 	char iovbuf[32];
 	int bcn_li_dtim = 3;
