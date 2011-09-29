@@ -4,8 +4,10 @@
 #ifdef __KERNEL__
 
 #define USE_FAKE_SHMOO
-#define DISABLE_FAKE_SHMOO_UV
 //define larger_epeen
+#ifdef larger_epeen
+#define DISABLE_FAKE_SHMOO_UV
+#endif
 
 // mm stuff
 #define dirty_background_ratio_default 20
@@ -33,8 +35,8 @@
 #ifdef larger_epeen
 
 #define VORK_AVP_FREQ 280000
-#define VORK_VDE_FREQ 280000
-#define VORK_SYSTEM_FREQ 300000
+#define VORK_VDE_FREQ VORK_AVP_FREQ
+#define VORK_SYSTEM_FREQ VORK_AVP_FREQ
 #define VORK_EMC_VOLT 1250
 #define VORK_GPU_DIVIDER 8
 #define VORK_GPU_FREQ 366666
@@ -45,7 +47,7 @@
 #define VORK_VDE_FREQ 240000
 #define VORK_SYSTEM_FREQ 300000
 #define VORK_EMC_VOLT 1200
-#define VORK_GPU_DIVIDER 7
+#define VORK_GPU_DIVIDER 8
 #define VORK_GPU_FREQ 333500
 
 #endif
