@@ -268,8 +268,8 @@ extern "C"
  * mechanism.
  */
 #define NVRM_DTT_DEGREES_HIGH           (95L)
-#define NVRM_DTT_DEGREES_LOW            (70L)
-#define NVRM_DTT_DEGREES_HYSTERESIS     (5L)
+#define NVRM_DTT_DEGREES_LOW            (65L)
+#define NVRM_DTT_DEGREES_HYSTERESIS     (8L)
 
 #define NVRM_DTT_VOLTAGE_THROTTLE_MV    (NvRmVoltsMaximum)
 #define NVRM_DTT_CPU_DELTA_KHZ          (100000UL)
