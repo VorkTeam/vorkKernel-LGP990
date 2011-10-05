@@ -60,7 +60,7 @@ NvU32 FakeShmooVoltages[] = {
     750,
     800,
     850,
-    900,
+    950,
     1050,
     1150,
     1250,
@@ -94,9 +94,9 @@ NvU32 FakeShmooVoltages[] = {
     750,
     775,
     825,
-    875,
-    950,
-    1050,
+    900,
+    1000,
+    1100,
 };
 
 NvRmScaledClkLimits FakepScaledCpuLimits = {
