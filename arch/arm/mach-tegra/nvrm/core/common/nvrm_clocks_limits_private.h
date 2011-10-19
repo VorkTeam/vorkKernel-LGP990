@@ -34,7 +34,6 @@
 #define INCLUDED_NVRM_CLOCKS_LIMITS_PRIVATE_H
 
 #include "nvrm_power_private.h"
-#include <linux/vorkKernel.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -45,11 +44,7 @@ extern "C"
 #define NVRM_PROCESS_CORNERS (4)
 
 // Maximum supported core and/or CPU voltage characterization steps
-#ifdef larger_epeen
 #define NVRM_VOLTAGE_STEPS (8)
-#else
-#define NVRM_VOLTAGE_STEPS (6)
-#endif //larger_epeen
 
 // Minimum required core voltage resolution
 #define NVRM_CORE_RESOLUTION_MV (25)
