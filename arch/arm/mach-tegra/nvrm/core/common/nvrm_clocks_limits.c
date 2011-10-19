@@ -57,9 +57,9 @@ NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 NvU32 FakeShmooVmaxIndex = 7; // Max voltage index in the voltage tab (size-1)
 
 NvU32 FakeShmooVoltages[] = {
-    750,
     800,
-    850,
+    825,
+    875,
     950,
     1050,
     1150,
@@ -74,10 +74,10 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     // Clock table
     {
 	216000,
-    	456000,
-    	608000,
+    	503000,
+    	655000,
     	816000,
-    	1000000,
+    	1015000,
     	1216000,
 	1408000,
 	1504000,
@@ -91,12 +91,12 @@ NvRmCpuShmoo fake_CpuShmoo; // Pointer to fake CpuShmoo values
 NvU32 FakeShmooVmaxIndex = 5; // Max voltage index in the voltage tab (size-1)
 
 NvU32 FakeShmooVoltages[] = {
-    750,
     775,
+    800,
     825,
     900,
-    1000,
-    1100,
+    975,
+    1075,
 };
 
 NvRmScaledClkLimits FakepScaledCpuLimits = {
@@ -106,10 +106,10 @@ NvRmScaledClkLimits FakepScaledCpuLimits = {
     // Clock table
     {
 	216000,
-    	456000,
-    	608000,
+    	503000,
+    	655000,
     	816000,
-	1000000,
+	1015000,
 	1216000,
     }
 };

@@ -242,8 +242,8 @@ extern "C"
  * If thresholds are set to 0, the values are derived at run time from the
  * characterization data
  */
-#define NVRM_CPU1_ON_MIN_KHZ (608000)
-#define NVRM_CPU1_OFF_MAX_KHZ (456000)
+#define NVRM_CPU1_ON_MIN_KHZ (655000)
+#define NVRM_CPU1_OFF_MAX_KHZ (503000)
 
 #define NVRM_CPU1_ON_PENDING_MS (1500)
 #define NVRM_CPU1_OFF_PENDING_MS (1000)
@@ -267,9 +267,9 @@ extern "C"
  * ODM should also set a critical threshold to trigger h/w shutdown
  * mechanism.
  */
-#define NVRM_DTT_DEGREES_HIGH           (95L)
+#define NVRM_DTT_DEGREES_HIGH           (90L)
 #define NVRM_DTT_DEGREES_LOW            (65L)
-#define NVRM_DTT_DEGREES_HYSTERESIS     (8L)
+#define NVRM_DTT_DEGREES_HYSTERESIS     (5L)
 
 #define NVRM_DTT_VOLTAGE_THROTTLE_MV    (NvRmVoltsMaximum)
 #define NVRM_DTT_CPU_DELTA_KHZ          (100000UL)
