@@ -24,12 +24,6 @@
 #define sysctl_sched_wakeup_granularity_default 1000000UL
 #define normalized_sysctl_sched_wakeup_granularity_default 1000000UL
 
-// Test some stuff 
-#define CFS_BOOST
-// Possible Range: -20 19
-#define CFS_BOOST_NICE -10
-
-
 // AVP/SYSTEM/GPU/VDE OC related stuff
 
 #ifdef larger_epeen

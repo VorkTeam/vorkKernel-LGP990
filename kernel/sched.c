@@ -78,7 +78,6 @@
 #include <linux/vorkKernel.h>
 
 #include "sched_cpupri.h"
-#include "sched_autogroup.h"
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
@@ -311,23 +310,15 @@ struct task_group init_task_group;
 /* return group to which a task belongs */
 static inline struct task_group *task_group(struct task_struct *p)
 {
+	struct task_group *tg;
 
 #ifdef CONFIG_CGROUP_SCHED
-	struct task_group *tg;
-	struct cgroup_subsys_state *css;
-
-	css = task_subsys_state(p, cpu_cgroup_subsys_id);
-
-	tg = container_of(css, struct task_group, css);
-
-	return autogroup_task_group(p, tg);
+	tg = container_of(task_subsys_state(p, cpu_cgroup_subsys_id),
+				struct task_group, css);
 #else
-	struct task_group *tg;
-
 	tg = &init_task_group;
-
-	return tg;
 #endif
+	return tg;
 }
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
@@ -1930,7 +1921,6 @@ static void sched_irq_time_avg_update(struct rq *rq, u64 curr_irq_time) { }
 #include "sched_idletask.c"
 #include "sched_fair.c"
 #include "sched_rt.c"
-#include "sched_autogroup.c"
 #ifdef CONFIG_SCHED_DEBUG
 # include "sched_debug.c"
 #endif
@@ -9806,7 +9796,6 @@ void __init sched_init(void)
 	list_add(&init_task_group.list, &task_groups);
 	INIT_LIST_HEAD(&init_task_group.children);
 
-	autogroup_init(&init_task);
 #endif /* CONFIG_CGROUP_SCHED */
 
 #if defined CONFIG_FAIR_GROUP_SCHED && defined CONFIG_SMP
@@ -10344,9 +10333,13 @@ void sched_destroy_group(struct task_group *tg)
  *	by now. This function just updates tsk->se.cfs_rq and tsk->se.parent to
  *	reflect its new group.
  */
-void __sched_move_task(struct task_struct *tsk, struct rq *rq)
+void sched_move_task(struct task_struct *tsk)
 {
 	int on_rq, running;
+	unsigned long flags;
+	struct rq *rq;
+
+	rq = task_rq_lock(tsk, &flags);
 
 	update_rq_clock(rq);
 
@@ -10369,15 +10362,6 @@ void __sched_move_task(struct task_struct *tsk, struct rq *rq)
 		tsk->sched_class->set_curr_task(rq);
 	if (on_rq)
 		enqueue_task(rq, tsk, 0, false);
-}
-
-void sched_move_task(struct task_struct *tsk)
-{
-	struct rq *rq;
-	unsigned long flags;
-
-	rq = task_rq_lock(tsk, &flags);
-	__sched_move_task(tsk, rq);
 
 	task_rq_unlock(rq, &flags);
 }
