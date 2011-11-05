@@ -267,7 +267,7 @@ extern "C"
  * ODM should also set a critical threshold to trigger h/w shutdown
  * mechanism.
  */
-#define NVRM_DTT_DEGREES_HIGH           (90L)
+#define NVRM_DTT_DEGREES_HIGH           (95L)
 #define NVRM_DTT_DEGREES_LOW            (65L)
 #define NVRM_DTT_DEGREES_HYSTERESIS     (5L)
 

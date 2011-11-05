@@ -5,6 +5,7 @@
 
 #define USE_FAKE_SHMOO
 //define larger_epeen
+
 #ifdef larger_epeen
 #define DISABLE_FAKE_SHMOO_UV
 #endif
@@ -38,8 +39,8 @@
 #else
 
 #define VORK_AVP_FREQ 240000
-#define VORK_VDE_FREQ 240000
-#define VORK_SYSTEM_FREQ 240000
+#define VORK_VDE_FREQ VORK_AVP_FREQ
+#define VORK_SYSTEM_FREQ VORK_AVP_FREQ
 #define VORK_EMC_VOLT 1200
 #define VORK_GPU_DIVIDER 8
 #define VORK_GPU_FREQ 333500
@@ -52,6 +53,3 @@
 #endif /* __KERNEL__ */
 
 #endif
-
-
-
