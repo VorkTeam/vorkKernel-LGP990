@@ -11,8 +11,8 @@
 #endif
 
 // mm stuff
-#define dirty_background_ratio_default 20
-#define vm_dirty_ratio_default 50
+#define dirty_background_ratio_default 10
+#define vm_dirty_ratio_default 10
 #define inactive_file_ratio_default 20
 #define vfs_cache_pressure 25
 
