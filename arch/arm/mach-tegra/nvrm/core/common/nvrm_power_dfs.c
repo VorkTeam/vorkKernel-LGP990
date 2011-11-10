@@ -3716,18 +3716,6 @@ NvRmDfsSetLowVoltageThreshold(
     NvRmPrivUnlockSharedPll();
 }
 
-void
-NvRmDvsForceUpdate(NvRmDeviceHandle hRmDeviceHandle)
-{
-    NvRmDvs* pDvs = &s_Dfs.VoltageScaler;
-
-    NV_ASSERT(hRmDeviceHandle);
-
-    NvRmPrivLockSharedPll();
-    pDvs->UpdateFlag = NV_TRUE;
-    NvRmPrivUnlockSharedPll();
-}
-
 /*****************************************************************************/
 // DTT PUBLIC INTERFACES
 /*****************************************************************************/
