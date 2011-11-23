@@ -1053,16 +1053,16 @@ NvRmPrivClocksInit(NvRmDeviceHandle hRmDevice)
                 s_ClockSourceFreq[NvRmClockSource_ClkM] = 12000;
                 s_ClockSourceFreq[NvRmClockSource_ClkD] = 24000;
 
-	    s_ClockSourceFreq[NvRmClockSource_PllA0] = 12288;
+	    s_ClockSourceFreq[NvRmClockSource_PllA0] = VORK_PLLA0 ;
 	    s_ClockSourceFreq[NvRmClockSource_PllP0] = 216000;
             s_ClockSourceFreq[NvRmClockSource_PllP1] =  28800;
             s_ClockSourceFreq[NvRmClockSource_PllP2] =  48000;
             s_ClockSourceFreq[NvRmClockSource_PllP3] =  72000;
             s_ClockSourceFreq[NvRmClockSource_PllP4] = 108000;
-	    s_ClockSourceFreq[NvRmClockSource_PllC0] = VORK_EMC2_FREQ;
-	    s_ClockSourceFreq[NvRmClockSource_PllM0] = VORK_EMC2_FREQ;
-	    s_ClockSourceFreq[NvRmClockSource_PllX0] = 1100000;
-	    s_ClockSourceFreq[NvRmClockSource_SystemBus] = VORK_SYSTEM_FREQ;
+	    s_ClockSourceFreq[NvRmClockSource_PllC0] = VORK_EMC2_FREQ ;
+	    s_ClockSourceFreq[NvRmClockSource_PllM0] = VORK_EMC2_FREQ ;
+	    s_ClockSourceFreq[NvRmClockSource_PllX0] = VORK_PLLX0 ;
+	    s_ClockSourceFreq[NvRmClockSource_SystemBus] = VORK_SYSTEM_FREQ ;
 
             NvRmPrivBusClockInit(
                 hRmDevice, s_ClockSourceFreq[NvRmClockSource_SystemBus]);
