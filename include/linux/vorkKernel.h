@@ -33,23 +33,11 @@
 
 // AVP/SYSTEM/GPU/VDE OC related stuff
 
-#ifdef larger_epeen
-
-#define VORK_AVP_FREQ 300000
-#define VORK_VDE_FREQ VORK_AVP_FREQ
-#define VORK_SYSTEM_FREQ 300000
-#define VORK_EMC_VOLT 1200
-#define VORK_GPU_FREQ 380000
-
-#else
-
 #define VORK_AVP_FREQ 280000
 #define VORK_VDE_FREQ VORK_AVP_FREQ
 #define VORK_SYSTEM_FREQ 280000
 #define VORK_EMC_VOLT 1200
 #define VORK_GPU_FREQ 366666
-
-#endif
 
 #define VORK_EMC2_FREQ ( 252000 * 5 / 2 )
 #define VORK_DDR_FREQ ( VORK_EMC2_FREQ / 2 )
