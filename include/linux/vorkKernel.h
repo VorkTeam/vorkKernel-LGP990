@@ -35,7 +35,7 @@
 
 #ifdef larger_epeen
 
-#define VORK_AVP_FREQ 280000
+#define VORK_AVP_FREQ 240000
 #define VORK_VDE_FREQ VORK_AVP_FREQ
 #define VORK_SYSTEM_FREQ VORK_AVP_FREQ
 #define VORK_EMC_VOLT 1250
