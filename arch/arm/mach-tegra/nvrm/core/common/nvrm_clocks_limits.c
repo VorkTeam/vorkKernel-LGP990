@@ -344,9 +344,9 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
     // Set 3D upper clock boundary with combined Absolute/Scaled limit.
     s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = VORK_GPU_FREQ ;
 
-	NvOsDebugPrintf(
-	"Gpu khz:%d\n"
-	s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
+   NvOsDebugPrintf(
+   "gpukhz:%d\n",
+   s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
     // (fill in clock limits for both display heads)
