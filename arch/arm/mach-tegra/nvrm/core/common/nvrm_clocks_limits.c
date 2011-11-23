@@ -255,6 +255,10 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
         }
     }
 
+        NvOsDebugPrintf(
+        "avp khz before:%d\n",
+        s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz);
+
 
 s_ClockRangeLimits[2].MaxKHz = VORK_AVP_FREQ ;
 s_ClockRangeLimits[7].MaxKHz = VORK_DDR_FREQ ;
@@ -286,7 +290,7 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
     s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz = VORK_AVP_FREQ ;
 
         NvOsDebugPrintf(
-        "avpmaxkhz:%d\n",
+        "avp khz after:%d\n",
         s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz);
 
     s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz = VORK_SYSTEM_FREQ ;
@@ -302,9 +306,18 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
     // Set VDE upper clock boundary with combined Absolute/Scaled limit (on
     // AP15/Ap16 VDE clock derived from the system bus, and VDE maximum limit
     // must be the same as AVP/System).
+
+        NvOsDebugPrintf(
+        "vde khz before:%d\n",
+        s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
+
     VdeMaxKHz = VORK_VDE_FREQ ;
     NV_ASSERT(VdeMaxKHz == AvpMaxKHz);
     s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz = VdeMaxKHz;
+
+        NvOsDebugPrintf(
+	"vde khz after:%d\n",
+	s_ClockRangeLimits[NvRmModuleID_Vde].MaxKHz);
 
     // Set upper clock boundaries for devices on CPU bus (CPU, Mselect,
     // CMC) with combined Absolute/Scaled limits
