@@ -279,8 +279,22 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
 
     // Set AVP upper clock boundary with combined Absolute/Scaled limit;
     // Sync System clock with AVP (System is not in relocation table)
+	NvOsDebugPrintf(
+	"system khz before:%d\n",
+	s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz);
+
     s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz = VORK_AVP_FREQ ;
+
+        NvOsDebugPrintf(
+        "avpmaxkhz:%d\n",
+        s_ClockRangeLimits[NvRmModuleID_Avp].MaxKHz);
+
     s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz = VORK_SYSTEM_FREQ ;
+
+        NvOsDebugPrintf(
+        "system khz after:%d\n",
+        s_ClockRangeLimits[NvRmPrivModuleID_System].MaxKHz);
+
     s_ClockRangeLimits[NvRmPrivModuleID_System].MinKHz =
         s_ClockRangeLimits[NvRmModuleID_Avp].MinKHz;
     s_pClockScales[NvRmPrivModuleID_System] = s_pClockScales[NvRmModuleID_Avp];
@@ -329,6 +343,10 @@ NvOsDebugPrintf("s_ClockRangeLimits[%d].MaxKHz = %d", NvRmModuleID_Cpu, s_ClockR
 
     // Set 3D upper clock boundary with combined Absolute/Scaled limit.
     s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz = VORK_GPU_FREQ ;
+
+	NvOsDebugPrintf(
+	"Gpu khz:%d\n"
+	s_ClockRangeLimits[NvRmModuleID_3D].MaxKHz);
 
     // Set Display upper clock boundary with combined Absolute/Scaled limit.
     // (fill in clock limits for both display heads)
