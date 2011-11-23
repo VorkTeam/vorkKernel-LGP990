@@ -39,7 +39,7 @@
 #define VORK_EMC_VOLT 1200
 #define VORK_GPU_FREQ 366666
 
-#define VORK_EMC2_FREQ ( 252000 * 5 / 2 )
+#define VORK_EMC2_FREQ ( 256000 * 5 / 2 )
 #define VORK_DDR_FREQ ( VORK_EMC2_FREQ / 2 )
 
 #define VORK_GPU_DIVIDER (7)
