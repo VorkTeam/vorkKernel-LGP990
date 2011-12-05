@@ -140,8 +140,6 @@ config INITRAMFS_COMPRESSION_LZMA
 	  two. Compression is slowest.	The initramfs size is about 33%
 	  smaller with LZMA in comparison to gzip.
 
-<<<<<<< HEAD
-=======
 config INITRAMFS_COMPRESSION_XZ
 	bool "XZ"
 	depends on RD_XZ
@@ -151,13 +149,4 @@ config INITRAMFS_COMPRESSION_XZ
 	  is better than that of bzip2 but worse than gzip and LZO.
 	  Compression is slow.
 
-config INITRAMFS_COMPRESSION_LZO
-	bool "LZO"
-	depends on RD_LZO
-	help
-	  Its compression ratio is the poorest among the four. The kernel
-	  size is about about 10% bigger than gzip; however its speed
-	  (both compression and decompression) is the fastest.
-
->>>>>>> 5c9026e... decompressors: add boot-time XZ support
 endchoice
