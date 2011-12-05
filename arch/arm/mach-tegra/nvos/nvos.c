@@ -63,6 +63,7 @@
 #include <linux/freezer.h>
 #include <linux/rbtree.h>
 #include <linux/rwsem.h>
+#include <linux/kmemleak.h>
 
 #define ATAG_NVIDIA_TEGRA 0x41000801
 struct tag_nvidia_tegra {
@@ -928,6 +929,11 @@ NvError NvOsSemaphoreCreate(
     s = kzalloc( sizeof(NvOsSemaphore), GFP_KERNEL );
     if( !s )
         return NvError_InsufficientMemory;
+
+    /* the semaphore reference is kept at the user space by the way nvos_ioctl()
+     * implemented. The kernel memory detection will treat this as false postive
+     * of memory leak. We need ignore it. */
+    kmemleak_not_leak(s);
 
     sema_init( &s->sem, value );
     atomic_set( &s->refcount, 1 );
