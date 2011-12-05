@@ -1474,7 +1474,8 @@ NvRmPowerModuleClockConfig (
         MaxFreq = f + 1;            // 1 kHz margin
     }
     else if (PrefFreqList &&
-             ((ModuleName == NvRmPrivModuleID_MemoryController) ||
+             ((ModuleName == NvRmModuleID_Vde) ||
+              (ModuleName == NvRmPrivModuleID_MemoryController) ||
               (ModuleName == NvRmPrivModuleID_ExternalMemoryController)))
     {   // CPU, AVP are not allowed too, but failed get state if tried
         NV_ASSERT(!"MC/EMC, VDE clock configuration is not allowed here");
