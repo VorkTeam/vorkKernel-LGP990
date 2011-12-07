@@ -35,8 +35,9 @@
 #include <linux/oom.h>
 #include <linux/sched.h>
 #include <linux/notifier.h>
+#include <linux/swap.h>
 
-static uint32_t lowmem_debug_level = 2;
+static uint32_t lowmem_debug_level = 4;
 static int lowmem_adj[6] = {
 	0,
 	1,
@@ -83,6 +84,7 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 {
 	struct task_struct *p;
 	struct task_struct *selected = NULL;
+	struct sysinfo si;
 	int rem = 0;
 	int tasksize;
 	int i;
@@ -91,8 +93,18 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	int selected_oom_adj;
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free = global_page_state(NR_FREE_PAGES);
-	int other_file = global_page_state(NR_FILE_PAGES) -
-						global_page_state(NR_SHMEM);
+	int other_file = global_page_state(NR_FILE_PAGES) - global_page_state(NR_SHMEM);
+
+	si_swapinfo(&si);
+
+	//unsigned long int usedSwap = si.totalswap - si.freeswap;
+
+	if (si.freeswap > (si.totalswap * .75))
+	{
+		other_free += si.freeswap;
+		lowmem_print(3, "OF %d FREESWPAGES %ld NEWOF %ld\n", other_free, si.freeswap, other_free + si.freeswap);
+	}
+
 
 	/*
 	 * If we already have a death outstanding, then
@@ -109,9 +121,10 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 		array_size = lowmem_adj_size;
 	if (lowmem_minfree_size < array_size)
 		array_size = lowmem_minfree_size;
-	for (i = 0; i < array_size; i++) {
-		if (other_free < lowmem_minfree[i] &&
-		    other_file < lowmem_minfree[i]) {
+	for (i = 0; i < array_size; i++)
+	{
+		if (other_free < lowmem_minfree[i] && other_file < lowmem_minfree[i])
+		{
 			min_adj = lowmem_adj[i];
 			break;
 		}
