@@ -161,8 +161,8 @@ tproxy_tg4(struct sk_buff *skb, __be32 laddr, __be16 lport,
 		skb->mark = (skb->mark & ~mark_mask) ^ mark_value;
 
 		pr_debug("redirecting: proto %hhu %pI6:%hu -> %pI6:%hu, mark: %x\n",
-				tproto, &iph->saddr, ntohs(hp->dest),
-				&tgi->laddr.in6, ntohs(tgi->lport), skb->mark);
+				iph->protocol, &iph->daddr, ntohs(hp->dest),
+				&laddr, ntohs(lport), skb->mark);
 
 		nf_tproxy_assign_sock(skb, sk);
 		return NF_ACCEPT;
@@ -206,6 +206,7 @@ tproxy_laddr6(struct sk_buff *skb, const struct in6_addr *user_laddr,
 
 	rcu_read_lock();
 	indev = __in6_dev_get(skb->dev);
+	#if 0
 	if (indev)
 		list_for_each_entry(ifa, &indev->addr_list, if_list) {
 			if (ifa->flags & (IFA_F_TENTATIVE | IFA_F_DEPRECATED))
@@ -214,6 +215,7 @@ tproxy_laddr6(struct sk_buff *skb, const struct in6_addr *user_laddr,
 			laddr = &ifa->addr;
 			break;
 		}
+	#endif
 	rcu_read_unlock();
 
 	return laddr ? laddr : daddr;
