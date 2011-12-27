@@ -7,7 +7,10 @@
  */
 
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/gfp.h>
+=======
+>>>>>>> bb/ics
 #include <linux/skbuff.h>
 #include <linux/selinux.h>
 #include <linux/netfilter_ipv4/ip_tables.h>
@@ -38,13 +41,21 @@ static unsigned int xt_ct_target(struct sk_buff *skb,
 
 static u8 xt_ct_find_proto(const struct xt_tgchk_param *par)
 {
+<<<<<<< HEAD
 	if (par->family == NFPROTO_IPV4) {
+=======
+	if (par->family == AF_INET) {
+>>>>>>> bb/ics
 		const struct ipt_entry *e = par->entryinfo;
 
 		if (e->ip.invflags & IPT_INV_PROTO)
 			return 0;
 		return e->ip.proto;
+<<<<<<< HEAD
 	} else if (par->family == NFPROTO_IPV6) {
+=======
+	} else if (par->family == AF_INET6) {
+>>>>>>> bb/ics
 		const struct ip6t_entry *e = par->entryinfo;
 
 		if (e->ipv6.invflags & IP6T_INV_PROTO)
@@ -54,12 +65,17 @@ static u8 xt_ct_find_proto(const struct xt_tgchk_param *par)
 		return 0;
 }
 
+<<<<<<< HEAD
 static int xt_ct_tg_check(const struct xt_tgchk_param *par)
+=======
+static bool xt_ct_tg_check(const struct xt_tgchk_param *par)
+>>>>>>> bb/ics
 {
 	struct xt_ct_target_info *info = par->targinfo;
 	struct nf_conntrack_tuple t;
 	struct nf_conn_help *help;
 	struct nf_conn *ct;
+<<<<<<< HEAD
 	int ret = 0;
 	u8 proto;
 
@@ -68,6 +84,15 @@ static int xt_ct_tg_check(const struct xt_tgchk_param *par)
 
 	if (info->flags & XT_CT_NOTRACK) {
 		ct = &nf_conntrack_untracked;
+=======
+	u8 proto;
+
+	if (info->flags & ~XT_CT_NOTRACK)
+		return false;
+
+	if (info->flags & XT_CT_NOTRACK) {
+		ct = nf_ct_untracked_get();
+>>>>>>> bb/ics
 		atomic_inc(&ct->ct_general.use);
 		goto out;
 	}
@@ -77,34 +102,53 @@ static int xt_ct_tg_check(const struct xt_tgchk_param *par)
 		goto err1;
 #endif
 
+<<<<<<< HEAD
 	ret = nf_ct_l3proto_try_module_get(par->family);
 	if (ret < 0)
+=======
+	if (nf_ct_l3proto_try_module_get(par->family) < 0)
+>>>>>>> bb/ics
 		goto err1;
 
 	memset(&t, 0, sizeof(t));
 	ct = nf_conntrack_alloc(par->net, info->zone, &t, &t, GFP_KERNEL);
+<<<<<<< HEAD
 	ret = PTR_ERR(ct);
 	if (IS_ERR(ct))
 		goto err2;
 
 	ret = 0;
+=======
+	if (IS_ERR(ct))
+		goto err2;
+
+>>>>>>> bb/ics
 	if ((info->ct_events || info->exp_events) &&
 	    !nf_ct_ecache_ext_add(ct, info->ct_events, info->exp_events,
 				  GFP_KERNEL))
 		goto err3;
 
 	if (info->helper[0]) {
+<<<<<<< HEAD
 		ret = -ENOENT;
+=======
+>>>>>>> bb/ics
 		proto = xt_ct_find_proto(par);
 		if (!proto)
 			goto err3;
 
+<<<<<<< HEAD
 		ret = -ENOMEM;
+=======
+>>>>>>> bb/ics
 		help = nf_ct_helper_ext_add(ct, GFP_KERNEL);
 		if (help == NULL)
 			goto err3;
 
+<<<<<<< HEAD
 		ret = -ENOENT;
+=======
+>>>>>>> bb/ics
 		help->helper = nf_conntrack_helper_try_module_get(info->helper,
 								  par->family,
 								  proto);
@@ -116,14 +160,22 @@ static int xt_ct_tg_check(const struct xt_tgchk_param *par)
 	__set_bit(IPS_CONFIRMED_BIT, &ct->status);
 out:
 	info->ct = ct;
+<<<<<<< HEAD
 	return 0;
+=======
+	return true;
+>>>>>>> bb/ics
 
 err3:
 	nf_conntrack_free(ct);
 err2:
 	nf_ct_l3proto_module_put(par->family);
 err1:
+<<<<<<< HEAD
 	return ret;
+=======
+	return false;
+>>>>>>> bb/ics
 }
 
 static void xt_ct_tg_destroy(const struct xt_tgdtor_param *par)
@@ -132,7 +184,11 @@ static void xt_ct_tg_destroy(const struct xt_tgdtor_param *par)
 	struct nf_conn *ct = info->ct;
 	struct nf_conn_help *help;
 
+<<<<<<< HEAD
 	if (ct != &nf_conntrack_untracked) {
+=======
+	if (!nf_ct_is_untracked(ct)) {
+>>>>>>> bb/ics
 		help = nfct_help(ct);
 		if (help)
 			module_put(help->helper->me);
@@ -145,7 +201,11 @@ static void xt_ct_tg_destroy(const struct xt_tgdtor_param *par)
 static struct xt_target xt_ct_tg __read_mostly = {
 	.name		= "CT",
 	.family		= NFPROTO_UNSPEC,
+<<<<<<< HEAD
 	.targetsize	= sizeof(struct xt_ct_target_info),
+=======
+	.targetsize	= XT_ALIGN(sizeof(struct xt_ct_target_info)),
+>>>>>>> bb/ics
 	.checkentry	= xt_ct_tg_check,
 	.destroy	= xt_ct_tg_destroy,
 	.target		= xt_ct_target,

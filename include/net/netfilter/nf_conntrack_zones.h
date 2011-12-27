@@ -1,11 +1,18 @@
 #ifndef _NF_CONNTRACK_ZONES_H
 #define _NF_CONNTRACK_ZONES_H
 
+<<<<<<< HEAD
 #define NF_CT_DEFAULT_ZONE	0
 
 #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
 #include <net/netfilter/nf_conntrack_extend.h>
 
+=======
+#include <net/netfilter/nf_conntrack_extend.h>
+
+#define NF_CT_DEFAULT_ZONE	0
+
+>>>>>>> bb/ics
 struct nf_conntrack_zone {
 	u16	id;
 };
@@ -21,5 +28,8 @@ static inline u16 nf_ct_zone(const struct nf_conn *ct)
 	return NF_CT_DEFAULT_ZONE;
 }
 
+<<<<<<< HEAD
 #endif /* CONFIG_NF_CONNTRACK || CONFIG_NF_CONNTRACK_MODULE */
+=======
+>>>>>>> bb/ics
 #endif /* _NF_CONNTRACK_ZONES_H */
