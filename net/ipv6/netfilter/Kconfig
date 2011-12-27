@@ -11,7 +11,7 @@ config NF_DEFRAG_IPV6
 
 config NF_CONNTRACK_IPV6
 	tristate "IPv6 connection tracking support"
-	depends on INET && IPV6 && NF_CONNTRACK
+	depends on INET && IPV6 && NF_CONNTRACK && NF_DEFRAG_IPV6
 	default m if NETFILTER_ADVANCED=n
 	select NF_DEFRAG_IPV6
 	---help---
