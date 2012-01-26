@@ -27,9 +27,16 @@
 *.gz
 *.bz2
 *.lzma
+*.xzkern
+*.xz
 *.patch
 *.gcno
-
+auto.conf
+auto.conf.cmd
+kernel.release
+autoconf.h
+utsrelease.h
+gedit.sh
 #
 # Top-level generic files
 #
@@ -46,6 +53,7 @@ Module.symvers
 # Generated include files
 #
 include/asm
+include/asm-arm/
 include/asm-*/asm-offsets.h
 include/config
 include/linux/autoconf.h
@@ -54,6 +62,7 @@ include/linux/version.h
 include/linux/utsrelease.h
 include/linux/bounds.h
 arch/arm/mach-msm/smd_rpc_sym.c
+arch/arm/boot/compressed/lib1funcs.S
 include/generated
 
 # stgit generated dirs
