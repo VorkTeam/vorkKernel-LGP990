@@ -329,7 +329,6 @@ static void tegra_touch_adjust_position(NvU32 finger_num, NvU32 x_value, NvU32 y
 #endif /* FEATURE_LGE_TOUCH_MOVING_IMPROVE */
 // 20101022  [STAR] apply touch smooth moving improve [END]
 
-
 #ifndef CONFIG_TOUCHSCREEN_ANDROID_VIRTUALKEYS
 static unsigned int button_map[5] = {KEY_MENU, KEY_HOME, KEY_BACK, KEY_SEARCH, KEY_UNKNOWN};
 #endif
