@@ -32,7 +32,7 @@ struct android_usb_product {
 	 */
 	__u16 vendor_id;
 
-	/* Default product ID. */
+	/* Product ID for this set of functions. */
 	__u16 product_id;
 
 	/* List of function names associated with this product.
